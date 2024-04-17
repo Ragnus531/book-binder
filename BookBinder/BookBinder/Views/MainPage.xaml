@@ -3,6 +3,114 @@
     x:Class="BookBinder.Views.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:uranium="clr-namespace:UraniumUI.Material;assembly=UraniumUI.Material"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
     xmlns:vm="clr-namespace:BookBinder.ViewModels"
-    x:DataType="vm:MainViewModel" />
+    Title=""
+    x:DataType="vm:MainViewModel">
+
+    <StackLayout>
+        <material:AutoCompleteTextField Title="Fruit">
+            <material:AutoCompleteTextField.ItemsSource>
+                <x:String>Borgos</x:String>
+                <x:String>Outpost</x:String>
+                <x:String>Diablo</x:String>
+                <x:String>Two faces</x:String>
+                <x:String>Batman</x:String>
+                <x:String>Hobbit</x:String>
+                <x:String>Star wars</x:String>
+                <x:String>Lord of the rings</x:String>
+                <x:String>Harry Potter</x:String>
+            </material:AutoCompleteTextField.ItemsSource>
+        </material:AutoCompleteTextField>
+
+        <uranium:GridLayout RowCount="1">
+            <CollectionView>
+                <CollectionView.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Borgos</x:String>
+                        <x:String>Outpost</x:String>
+                        <x:String>Diablo</x:String>
+                        <x:String>Two faces</x:String>
+                        <x:String>Batman</x:String>
+                        <x:String>Hobbit</x:String>
+                        <x:String>Star wars</x:String>
+                        <x:String>Lord of the rings</x:String>
+                        <x:String>Harry Potter</x:String>
+                    </x:Array>
+                </CollectionView.ItemsSource>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="{x:Type x:String}">
+                        <Frame StyleClass="PrimaryContainer">
+                            <Label Text="{Binding .}" />
+                        </Frame>
+                        <!--<Grid Margin="15,5,15,5" HeightRequest="75">
+                            <Border
+                                BackgroundColor="{StaticResource SecondaryColor}"
+                                Stroke="White"
+                                StrokeShape="RoundRectangle 30,30,30,30"
+                                StrokeThickness="2">
+
+                                <Grid BackgroundColor="Blue">
+                                    <Label
+                                        Padding="10"
+                                        FontAttributes="Bold"
+                                        HorizontalTextAlignment="Center"
+                                        Text="{Binding .}"
+                                        TextColor="White"
+                                        VerticalTextAlignment="Center" />
+                                </Grid>
+
+                            </Border>
+                        </Grid>-->
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <!--<BoxView Color="Green" />
+            <BoxView Color="Yellow" />
+            <BoxView Color="Red" />-->
+        </uranium:GridLayout>
+
+        <!--<CollectionView>
+            <CollectionView.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>Borgos</x:String>
+                    <x:String>Outpost</x:String>
+                    <x:String>Diablo</x:String>
+                    <x:String>Two faces</x:String>
+                    <x:String>Batman</x:String>
+                    <x:String>Hobbit</x:String>
+                    <x:String>Star wars</x:String>
+                    <x:String>Lord of the rings</x:String>
+                    <x:String>Harry Potter</x:String>
+                </x:Array>
+            </CollectionView.ItemsSource>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type x:String}">
+                    <Grid Margin="15,5,15,5" HeightRequest="75">
+                        <Border
+                            BackgroundColor="{StaticResource SecondaryColor}"
+                            Stroke="White"
+                            StrokeShape="RoundRectangle 30,30,30,30"
+                            StrokeThickness="2">
+
+                            <Grid BackgroundColor="Blue">
+                                <Label
+                                    Padding="10"
+                                    FontAttributes="Bold"
+                                    HorizontalTextAlignment="Center"
+                                    Text="{Binding .}"
+                                    TextColor="White"
+                                    VerticalTextAlignment="Center" />
+                            </Grid>
+
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>-->
+    </StackLayout>
+
+</ContentPage>
