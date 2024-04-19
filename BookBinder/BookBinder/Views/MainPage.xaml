@@ -5,27 +5,39 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:utils="clr-namespace:BookBinder.Utils"
     xmlns:vm="clr-namespace:BookBinder.ViewModels"
     Title=""
     x:DataType="vm:MainViewModel">
 
-    <StackLayout>
-        <material:AutoCompleteTextField Title="Fruit">
-            <material:AutoCompleteTextField.ItemsSource>
-                <x:String>Borgos</x:String>
-                <x:String>Outpost</x:String>
-                <x:String>Diablo</x:String>
-                <x:String>Two faces</x:String>
-                <x:String>Batman</x:String>
-                <x:String>Hobbit</x:String>
-                <x:String>Star wars</x:String>
-                <x:String>Lord of the rings</x:String>
-                <x:String>Harry Potter</x:String>
-            </material:AutoCompleteTextField.ItemsSource>
-        </material:AutoCompleteTextField>
+    <StackLayout BackgroundColor="{AppThemeBinding Light={StaticResource MainColor}, Dark={StaticResource MainColorDark}}">
+
+        <Grid ColumnDefinitions="9*,1*">
+            <material:AutoCompleteTextField Title="Fruit" BackgroundColor="{AppThemeBinding Light={StaticResource MainColor}, Dark={StaticResource MainColorDark}}">
+                <material:AutoCompleteTextField.ItemsSource>
+                    <x:String>Borgos</x:String>
+                    <x:String>Outpost</x:String>
+                    <x:String>Diablo</x:String>
+                    <x:String>Two faces</x:String>
+                    <x:String>Batman</x:String>
+                    <x:String>Hobbit</x:String>
+                    <x:String>Star wars</x:String>
+                    <x:String>Lord of the rings</x:String>
+                    <x:String>Harry Potter</x:String>
+                </material:AutoCompleteTextField.ItemsSource>
+            </material:AutoCompleteTextField>
+
+            <Label
+                Grid.Column="1"
+                FontFamily="FontAwesomeSolid"
+                HorizontalTextAlignment="Center"
+                Text="{x:Static utils:FontIcons.BookMedical}"
+                VerticalTextAlignment="Center" />
+        </Grid>
 
 
-        <CollectionView ItemsLayout="VerticalGrid, 2">
+
+        <CollectionView>
             <CollectionView.ItemsSource>
                 <x:Array Type="{x:Type x:String}">
                     <x:String>Borgos</x:String>
@@ -48,7 +60,7 @@
                             StrokeShape="RoundRectangle 30,30,30,30"
                             StrokeThickness="2">
 
-                            <Grid BackgroundColor="Blue">
+                            <Grid Style="{x:StaticResource GridSecondary}">
                                 <Label
                                     Padding="10"
                                     FontAttributes="Bold"

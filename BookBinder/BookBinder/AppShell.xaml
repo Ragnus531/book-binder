@@ -1,23 +1,23 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <Shell
-	x:Class="BookBinder.AppShell"
-	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:views="clr-namespace:BookBinder.Views"
-	xmlns:local="clr-namespace:BookBinder">
+    x:Class="BookBinder.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:BookBinder"
+    xmlns:views="clr-namespace:BookBinder.Views">
 
-	<TabBar>
-		<ShellContent
-			Title="Main"
-			Icon="iconblank.png"
-			ContentTemplate="{DataTemplate views:MainPage}" />
-		<ShellContent
-			Title="ListDetail"
-			Icon="iconlistdetail.png"
-			ContentTemplate="{DataTemplate views:ListDetailPage}" />
-		<ShellContent
-			Title="Localization"
-			Icon="iconlocalization.png"
-			ContentTemplate="{DataTemplate views:LocalizationPage}" />
-	</TabBar>
+    <TabBar>
+        <ShellContent
+            Title="Main"
+            ContentTemplate="{DataTemplate views:MainPage}"
+            Icon="iconblank.png" />
+        <ShellContent
+            Title="ListDetail"
+            ContentTemplate="{DataTemplate views:ListDetailPage}"
+            Icon="iconlistdetail.png" />
+        <ShellContent
+            Title="Localization"
+            ContentTemplate="{DataTemplate views:LocalizationPage}"
+            Icon="iconlocalization.png" />
+    </TabBar>
 </Shell>
