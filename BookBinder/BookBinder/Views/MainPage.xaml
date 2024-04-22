@@ -30,7 +30,9 @@
 
             <Label
                 Grid.Column="1"
+                Margin="0,5,0,0"
                 FontFamily="FontAwesomeSolid"
+                FontSize="Large"
                 HorizontalTextAlignment="Center"
                 Text="{x:Static utils:FontIcons.BookMedical}"
                 VerticalTextAlignment="Center" />
@@ -38,7 +40,10 @@
 
 
 
-        <CollectionView IsGrouped="true" ItemsSource="{Binding BookNotes}">
+        <CollectionView
+            IsGrouped="true"
+            ItemsSource="{Binding BookNotes}"
+            VerticalOptions="FillAndExpand">
 
             <CollectionView.GroupHeaderTemplate>
                 <DataTemplate x:DataType="models:BookNoteGroup">
@@ -50,7 +55,8 @@
                     <Frame
                         Margin="0,5,0,5"
                         Padding="10"
-                        BackgroundColor="Gray">
+                        BackgroundColor="{AppThemeBinding Light={StaticResource SecondaryColor},
+                                                          Dark={StaticResource SecondaryColorDark}}">
                         <Label FontSize="18" Text="{Binding Title}" />
                     </Frame>
                     <!--<Grid Padding="10">
