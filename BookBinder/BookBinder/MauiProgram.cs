@@ -32,6 +32,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<LocalizationViewModel>();
 
         builder.Services.AddSingleton<LocalizationPage>();
+        builder.Services.AddSingleton<BookNoteDetail>();
+        builder.Services.AddTransient<BookNoteDetailViewModel>();
 
         return builder.Build();
     }

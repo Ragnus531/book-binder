@@ -6,18 +6,8 @@
     xmlns:local="clr-namespace:BookBinder"
     xmlns:views="clr-namespace:BookBinder.Views">
 
-    <TabBar>
-        <ShellContent
-            Title="Main"
-            ContentTemplate="{DataTemplate views:MainPage}"
-            Icon="iconblank.png" />
-        <ShellContent
-            Title="ListDetail"
-            ContentTemplate="{DataTemplate views:ListDetailPage}"
-            Icon="iconlistdetail.png" />
-        <ShellContent
-            Title="Localization"
-            ContentTemplate="{DataTemplate views:LocalizationPage}"
-            Icon="iconlocalization.png" />
-    </TabBar>
+    <ShellContent
+        Title="Main"
+        ContentTemplate="{DataTemplate views:MainPage}"
+        Icon="iconblank.png" />
 </Shell>

@@ -11,7 +11,7 @@
     Title=""
     x:DataType="vm:MainViewModel">
 
-    <StackLayout BackgroundColor="{AppThemeBinding Light={StaticResource MainColor}, Dark={StaticResource MainColorDark}}">
+    <StackLayout Padding="5,0,5,0" BackgroundColor="{AppThemeBinding Light={StaticResource MainColor}, Dark={StaticResource MainColorDark}}">
 
         <Grid ColumnDefinitions="9*,1*">
             <material:AutoCompleteTextField Title="Fruit" BackgroundColor="{AppThemeBinding Light={StaticResource MainColor}, Dark={StaticResource MainColorDark}}">
@@ -57,6 +57,13 @@
                         Padding="10"
                         BackgroundColor="{AppThemeBinding Light={StaticResource SecondaryColor},
                                                           Dark={StaticResource SecondaryColorDark}}">
+
+
+
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MainViewModel}}, Path=GoToBookNoteDetailCommand}" CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
+
                         <Label FontSize="18" Text="{Binding Title}" />
                     </Frame>
                     <!--<Grid Padding="10">

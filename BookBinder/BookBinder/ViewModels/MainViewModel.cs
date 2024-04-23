@@ -48,4 +48,14 @@ public partial class MainViewModel : BaseViewModel
             )
         );
     }
+
+    [RelayCommand]
+    public async void GoToBookNoteDetail(BookNote bookNote)
+    {
+        await Shell.Current.GoToAsync(
+            nameof(BookNoteDetail),
+            true,
+            new Dictionary<string, object> { { "BookItem", bookNote } }
+        );
+    }
 }
