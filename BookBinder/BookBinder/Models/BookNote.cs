@@ -19,7 +19,8 @@ namespace BookBinder.Models
 
     public class BookNote
     {
+        public Guid Id { get; set; }
         public string Title { get; set; }
-        public string AbsolutePath { get; set; }
+        public List<NoteSection> NoteSections { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿using UraniumUI;
+﻿using BookBinder.Data;
+using LiteDB;
+using UraniumUI;
 
 namespace BookBinder;
 
@@ -35,6 +37,17 @@ public static class MauiProgram
         builder.Services.AddSingleton<BookNoteDetail>();
         builder.Services.AddTransient<BookNoteDetailViewModel>();
 
-        return builder.Build();
+        var path = Path.Combine(FileSystem.AppDataDirectory, "book-notes.db");
+        //add as a singleton - it's a single file with a single access point
+        builder.Services.AddSingleton<ILiteDatabase, LiteDatabase>(x => new LiteDatabase(path));
+
+        builder.Services.AddScoped<INoteService, NoteService>();
+
+        var app = builder.Build();
+#if DEBUG
+        DbSeed.Seed(app.Services.GetRequiredService<INoteService>());
+#endif
+
+        return app;
     }
 }

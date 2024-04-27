@@ -2,10 +2,7 @@ namespace BookBinder.Views;
 
 public partial class BookNoteDetail : ContentPage
 {
-    public BookNoteDetail()
-    {
-        Console.WriteLine("saa");
-    }
+    public BookNoteDetail() { }
 
     public BookNoteDetail(BookNoteDetailViewModel bookNoteDetailViewModel)
     {
