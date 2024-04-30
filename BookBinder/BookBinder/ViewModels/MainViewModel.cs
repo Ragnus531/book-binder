@@ -63,11 +63,10 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     public async void GoToBookNoteDetail(BookNote bookNote)
     {
-        _noteService.DeleteNote(bookNote);
-        //await Shell.Current.GoToAsync(
-        //    nameof(BookNoteDetail),
-        //    true,
-        //    new Dictionary<string, object> { { "BookItem", bookNote } }
-        //);
+        await Shell.Current.GoToAsync(
+            nameof(BookNoteDetail),
+            true,
+            new Dictionary<string, object> { { "BookItem", bookNote } }
+        );
     }
 }
