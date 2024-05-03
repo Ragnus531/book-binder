@@ -1,0 +1,65 @@
+﻿@page "/note-detail/{SetHashCode:int}"
+@using BookBinder.Models
+@using BookBinder.Services
+@using BookBinder.Utils
+@inject StateContainer _stateContainer;
+
+
+
+@if (BookNote != null)
+{
+    <MudText Typo="Typo.subtitle1" hidden="@(BookNote.NoteSections.Count > 0 ? true : false)"><b>Yoo crete that first section bruda by clicking that "+"  icon</b></MudText>
+
+    <MudDynamicTabs @bind-ActivePanelIndex="@UserIndex" 
+                    AddTab="@AddTabCallback" CloseTab="@CloseTabCallback"
+                    PanelClass="px-4 py-6" MinimumTabWidth="20px" Elevation="4" Position="Position.Start"
+                    AlwaysShowScrollButtons="BookNote.NoteSections.Count > 0 ? true : false" 
+                    PrevIcon="@Icons.Material.Filled.Circle" NextIcon="@Icons.Material.Outlined.Circle"
+                    HideSlider Rounded ApplyEffectsToContainer>
+        @foreach (var tab in BookNote.NoteSections)
+        {
+            <MudTabPanel Class="ma-0 pa-0" ID="@tab.Id" Text="@tab.Title"><MudText>Content One</MudText></MudTabPanel>
+        }
+    </MudDynamicTabs>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+
+@code {
+    public int UserIndex;
+
+    public void AddTab(Guid id)
+    {
+        BookNote.NoteSections.Add(new NoteSection() { Id = Guid.NewGuid(), Title = "New Tab", Elements = new List<NoteSectionElement>() });
+        UserIndex = BookNote.NoteSections.Count - 1; // Automatically switch to the new tab.
+    }
+
+    public void RemoveTab(Guid id)
+    {
+        var tabView = BookNote.NoteSections.SingleOrDefault((t) => Equals(t.Id, id));
+        if (tabView is not null)
+        {
+            BookNote.NoteSections.Remove(tabView);
+        }
+    }
+
+    void AddTabCallback() => AddTab(Guid.NewGuid());
+    void CloseTabCallback(MudTabPanel panel) => RemoveTab((Guid)panel.ID);
+
+
+    [Parameter] public int SetHashCode { get; set; }
+    BookNote BookNote { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine("Getting hashCode " + SetHashCode);
+
+        var data = (BookNote)_stateContainer.ObjectTunnel[SetHashCode];
+
+        Console.WriteLine("object is " + data.Title);
+        BookNote = data;
+    }
+}

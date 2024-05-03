@@ -1,0 +1,22 @@
+.mud-tabs-toolbar-content {
+    overflow-x: hidden !important;
+    overflow: hidden !important;
+}
+
+.mud-dynamic-tabs-scroll-button {
+    display: none !important;
+    opacity: 0;
+    color: rgba(0,0,0,0);
+    transform: scale(0);
+}
+
+.mud-tabs-scroll-button {
+    background-color: blue !important;
+}
+
+h3 {
+    color: red;
+    font-style: italic;
+    text-shadow: 2px 2px 2px gray;
+    background-color: blue;
+}
