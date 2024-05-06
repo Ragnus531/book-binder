@@ -1,9 +1,12 @@
 ﻿@page "/note-detail/{SetHashCode:int}"
+@using BookBinder.Components.Dialogs
 @using BookBinder.Models
 @using BookBinder.Services
 @using BookBinder.Utils
-@inject StateContainer _stateContainer;
 
+@inject StateContainer _stateContainer;
+@inject IDialogService DialogService
+@inject INoteService _noteService;
 
 
 @if (BookNote != null)
@@ -31,10 +34,13 @@ else
 @code {
     public int UserIndex;
 
-    public void AddTab(Guid id)
+    public async Task AddTab(Guid id)
     {
-        BookNote.NoteSections.Add(new NoteSection() { Id = Guid.NewGuid(), Title = "New Tab", Elements = new List<NoteSectionElement>() });
+        var sectionTitle = await OpenDialog();
+        BookNote.NoteSections.Add(new NoteSection() { Id = Guid.NewGuid(), Title = sectionTitle, Elements = new List<NoteSectionElement>() });
+        _noteService.UpdateNote(BookNote);
         UserIndex = BookNote.NoteSections.Count - 1; // Automatically switch to the new tab.
+        StateHasChanged();
     }
 
     public void RemoveTab(Guid id)
@@ -43,6 +49,7 @@ else
         if (tabView is not null)
         {
             BookNote.NoteSections.Remove(tabView);
+            _noteService.UpdateNote(BookNote);
         }
     }
 
@@ -61,5 +68,14 @@ else
 
         Console.WriteLine("object is " + data.Title);
         BookNote = data;
+    }
+
+    private async Task<string> OpenDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
+        var result = await this.DialogService.Show<NoteSectionDialog>(string.Empty, new DialogParameters(), options).Result;
+        return result.Data as string;
+
+        //DialogService.Show<NoteSectionDialog>("Simple Dialog", options);
     }
 }
