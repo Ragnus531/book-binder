@@ -1,0 +1,29 @@
+﻿@using BookBinder.Models
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1" />
+            Add section
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField T="string" @bind-Value="@this.elementName" Label="Name" Immediate="@true" />
+        <MudTextField T="string" @bind-Value="@this.elementDescription" Label="Description" Immediate="@true" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Disabled="@(string.IsNullOrWhiteSpace(this.elementName))" Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    private string elementName = string.Empty;
+    private string elementDescription = string.Empty;
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(new NoteSectionElement() { Name = elementName, Description = elementDescription }));
+    void Cancel() => MudDialog.Cancel();
+}

@@ -3,8 +3,6 @@
 @using BookBinder.Models
 @using BookBinder.Services
 @using BookBinder.Utils
-@using Microsoft.AspNetCore.Components.QuickGrid
-@using QuickGrid = Microsoft.AspNetCore.Components.QuickGrid;
 
 @inject StateContainer _stateContainer;
 @inject IDialogService DialogService
@@ -21,7 +19,7 @@
 
 @if (BookNote != null)
 {
-    <MudText Typo="Typo.h3" hidden="@(BookNote.NoteSections.Count > 0 ? true : false)"><b>Yoo crete that first section bruda by clicking that "+"  icon</b></MudText>
+    <MudText Typo="Typo.subtitle1" hidden="@(BookNote.NoteSections.Count > 0 ? true : false)"><b>Yoo crete that first section bruda by clicking that "+"  icon</b></MudText>
 
     <MudDynamicTabs @bind-ActivePanelIndex="@UserIndex"
                     AddTab="@AddTabCallback" CloseTab="@CloseTabCallback"
@@ -36,17 +34,17 @@
 
                     <MudText Typo="Typo.h3"><b>@tab.Title</b></MudText>
 
-                    <MudFab Class="my-sticky-menu pa-3" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" />
+                    <MudFab Class="my-sticky-menu pa-3 mr-2" Style="float: right;" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewSection(tab)" />
 
                     <MudStack>
-                        @foreach (var person in employees)
+                        @foreach (var element in tab.Elements)
                         {
                             <MudGrid>
                                 <MudItem xs="6">
-                                    <MudTextField T="string" Label="Name" Variant="Variant.Text" Text="@person.Position" AutoGrow />
+                                    <MudTextField T="string" Variant="Variant.Text" Text="@element.Name" AutoGrow />
                                 </MudItem>
                                 <MudItem xs="6">
-                                    <MudTextField T="string" Label="Description" Variant="Variant.Text" Text="@person.Name" AutoGrow />
+                                    <MudTextField T="string" Variant="Variant.Text" Text="@element.Description" AutoGrow />
                                 </MudItem>
                             </MudGrid>
                             <MudDivider />
@@ -65,21 +63,6 @@ else
 
 
 @code {
-    public record Employee(string Name, string Position, int YearsEmployed, int Salary, int Rating);
-    public IEnumerable<Employee> employees;
-    record Person(int PersonId, string Name, DateOnly BirthDate);
-    IQueryable<Person> people = new[]
-       {
-        new Person(10895, "orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s", new DateOnly(1985, 3, 16)),
-        new Person(10944, "António Langa", new DateOnly(1991, 12, 1)),
-        new Person(11203, "Julie Smith", new DateOnly(1958, 10, 10)),
-        new Person(11205, "Nur Sari", new DateOnly(1922, 4, 27)),
-        new Person(11898, "Jose Hernandez", new DateOnly(2011, 5, 3)),
-        new Person(12130, "Kenji Sato", new DateOnly(2004, 1, 9)),
-    }.AsQueryable();
-
-    public string TextValue { get; set; }
-
 
     public int UserIndex;
 
@@ -117,13 +100,6 @@ else
 
         Console.WriteLine("object is " + data.Title);
         BookNote = data;
-        employees = new List<Employee>
-        {
-            new Employee("orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s", "CPA", 23, 87_000, 4),
-            new Employee("Alicia", "Product Manager", 11, 143_000, 5),
-            new Employee("Ira", "Developer", 4, 92_000, 3),
-            new Employee("John", "IT Director", 17, 229_000, 4),
-        };
     }
 
     private async Task<string> OpenDialog()
@@ -131,7 +107,17 @@ else
         var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
         var result = await this.DialogService.Show<NoteSectionDialog>(string.Empty, new DialogParameters(), options).Result;
         return result.Data as string;
+    }
 
-        //DialogService.Show<NoteSectionDialog>("Simple Dialog", options);
+    private async Task AddNewSection(NoteSection noteSection)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
+        var result = await this.DialogService.Show<NoteElementDialog>(string.Empty, new DialogParameters(), options).Result;
+        var elementFromDialog = result.Data as NoteSectionElement;
+        if(elementFromDialog != null)
+        {
+            noteSection.Elements.Add(elementFromDialog);
+            _noteService.UpdateNote(BookNote);
+        }
     }
 }
