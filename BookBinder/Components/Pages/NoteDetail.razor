@@ -30,21 +30,22 @@
         @foreach (var tab in BookNote.NoteSections)
         {
             <MudTabPanel ID="@tab.Id" Text="@tab.Title">
-                <MudContainer Fixed="true" Class="pa-0">
+                <MudContainer Fixed="true" Class="pa-0" >
 
                     <MudText Typo="Typo.h3"><b>@tab.Title</b></MudText>
 
-                    <MudFab Class="my-sticky-menu pa-3 mr-2" Style="float: right;" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewSection(tab)" />
+
+                    <MudFab Class="my-sticky-menu pa-3 mr-2 align-self-end" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewSection(tab)" />
 
                     <MudStack>
                         @foreach (var element in tab.Elements)
                         {
                             <MudGrid>
                                 <MudItem xs="6">
-                                    <MudTextField T="string" Variant="Variant.Text" Text="@element.Name" AutoGrow />
+                                    <MudTextField Text="@element.Name" TextChanged="(value) => { element.Name = value; UpdateNoteSection(); }" T="string" AutoGrow Immediate />
                                 </MudItem>
                                 <MudItem xs="6">
-                                    <MudTextField T="string" Variant="Variant.Text" Text="@element.Description" AutoGrow />
+                                    <MudTextField Text="@element.Description" TextChanged="(value) => { element.Description = value; UpdateNoteSection(); }" T="string" AutoGrow Immediate />
                                 </MudItem>
                             </MudGrid>
                             <MudDivider />
@@ -119,5 +120,10 @@ else
             noteSection.Elements.Add(elementFromDialog);
             _noteService.UpdateNote(BookNote);
         }
+    }
+
+    private void UpdateNoteSection()
+    {
+        _noteService.UpdateNote(BookNote);
     }
 }
