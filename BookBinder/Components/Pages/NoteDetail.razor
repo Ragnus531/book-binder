@@ -15,25 +15,31 @@
         z-index: 2000;
         top: 64px;
     }
+
+    .tab-panel-width {
+        width: 150px;
+        word-wrap: break-word;
+        word-break: break-word;
+    }
 </style>
 
 @if (BookNote != null)
 {
     <MudText Typo="Typo.subtitle1" hidden="@(BookNote.NoteSections.Count > 0 ? true : false)"><b>Yoo crete that first section bruda by clicking that "+"  icon</b></MudText>
 
-    <MudDynamicTabs @bind-ActivePanelIndex="@UserIndex"
+    <MudDynamicTabs  @bind-ActivePanelIndex="@UserIndex"
                     AddTab="@AddTabCallback" CloseTab="@CloseTabCallback"
-                    MinimumTabWidth="20px" Elevation="4" Position="Position.Start"
+                    MinimumTabWidth="20px"  Elevation="4" Position="Position.Start"
                     AlwaysShowScrollButtons="BookNote.NoteSections.Count > 0 ? true : false"
                     PrevIcon="@Icons.Material.Filled.Circle" NextIcon="@Icons.Material.Outlined.Circle"
-                    HideSlider Rounded ApplyEffectsToContainer>
+                    HideSlider="true" Rounded ApplyEffectsToContainer>
         @foreach (var tab in BookNote.NoteSections)
         {
-            <MudTabPanel ID="@tab.Id" Text="@tab.Title">
+            <MudTabPanel ID="@tab.Id" Text="@tab.Title" Class="tab-panel-width">
                 <MudContainer Fixed="true" Class="pa-0" >
 
-                    <MudText Typo="Typo.h3"><b>@tab.Title</b></MudText>
 
+                    <MudTextField Text="@tab.Title" TextChanged="(value) => { tab.Title = value; UpdateNote(); }" T="string" Clearable="true" Immediate />
 
                     <MudFab Class="my-sticky-menu pa-3 mr-2 align-self-end" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewSection(tab)" />
 
@@ -42,10 +48,10 @@
                         {
                             <MudGrid>
                                 <MudItem xs="6">
-                                    <MudTextField Text="@element.Name" TextChanged="(value) => { element.Name = value; UpdateNoteSection(); }" T="string" AutoGrow Immediate />
+                                    <MudTextField Text="@element.Name" TextChanged="(value) => { element.Name = value; UpdateNote(); }" T="string" AutoGrow Immediate />
                                 </MudItem>
                                 <MudItem xs="6">
-                                    <MudTextField Text="@element.Description" TextChanged="(value) => { element.Description = value; UpdateNoteSection(); }" T="string" AutoGrow Immediate />
+                                    <MudTextField Text="@element.Description" TextChanged="(value) => { element.Description = value; UpdateNote(); }" T="string" AutoGrow Immediate />
                                 </MudItem>
                             </MudGrid>
                             <MudDivider />
@@ -122,7 +128,7 @@ else
         }
     }
 
-    private async Task UpdateNoteSection()
+    private async Task UpdateNote()
     {
         await Task.Run(() => _noteService.UpdateNote(BookNote));
     }
