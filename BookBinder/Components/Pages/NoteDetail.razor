@@ -122,8 +122,8 @@ else
         }
     }
 
-    private void UpdateNoteSection()
+    private async Task UpdateNoteSection()
     {
-        _noteService.UpdateNote(BookNote);
+        await Task.Run(() => _noteService.UpdateNote(BookNote));
     }
 }
