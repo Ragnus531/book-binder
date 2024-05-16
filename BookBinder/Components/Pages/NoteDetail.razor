@@ -43,24 +43,26 @@
 
                     <MudGrid>
                         <MudItem xs="6">
-                            <MudTextField ShrinkLabel="true"  Label="Filter title" T="string" AutoGrow Immediate />
+                            <MudTextField ShrinkLabel="true" Label="Filter Title" T="string" AutoGrow Immediate @bind-Value="@FilterText" />
                         </MudItem>
                         <MudItem xs="6">
-                            <MudTextField ShrinkLabel="true" Label="Filter Description"  T="string" AutoGrow Immediate />
+                            <MudTextField ShrinkLabel="true" Label="Filter Description" T="string" AutoGrow Immediate @bind-Value="@FilterDescription" />
                         </MudItem>
                     </MudGrid>
 
                     <MudFab Class="my-sticky-menu pa-3 mr-2 align-self-end" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewSection(tab)" />
 
                     <MudStack>
-                        @foreach (var element in tab.Elements)
+                        @foreach (var item in tab.Elements.Where(item =>
+                                   string.IsNullOrEmpty(FilterText) || item.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase)
+                                   && (string.IsNullOrEmpty(FilterDescription) || item.Description.Contains(FilterDescription, StringComparison.OrdinalIgnoreCase))))
                         {
                             <MudGrid>
                                 <MudItem xs="6">
-                                    <MudTextField Text="@element.Name" TextChanged="(value) => { element.Name = value; UpdateNote(); }" T="string" AutoGrow Immediate />
+                                    <MudTextField Text="@item.Name" TextChanged="(value) => { item.Name = value; UpdateNote(); }" T="string" AutoGrow Immediate />
                                 </MudItem>
                                 <MudItem xs="6">
-                                    <MudTextField Text="@element.Description" TextChanged="(value) => { element.Description = value; UpdateNote(); }" T="string" AutoGrow Immediate />
+                                    <MudTextField Text="@item.Description" TextChanged="(value) => { item.Description = value; UpdateNote(); }" T="string" AutoGrow Immediate />
                                 </MudItem>
                             </MudGrid>
                             <MudDivider />
@@ -79,6 +81,9 @@ else
 
 
 @code {
+    public string FilterText { get; set; }
+  public string FilterDescription { get; set; }
+
 
     public int UserIndex;
 
