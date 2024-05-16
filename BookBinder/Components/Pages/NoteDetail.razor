@@ -39,7 +39,16 @@
                 <MudContainer Fixed="true" Class="pa-0" >
 
 
-                    <MudTextField Text="@tab.Title" TextChanged="(value) => { tab.Title = value; UpdateNote(); }" T="string" Clearable="true" Immediate />
+                    <MudTextField ShrinkLabel="true" Label="Title" Text="@tab.Title" TextChanged="(value) => { tab.Title = value; UpdateNote(); }" T="string" Clearable="true" Immediate />
+
+                    <MudGrid>
+                        <MudItem xs="6">
+                            <MudTextField ShrinkLabel="true"  Label="Filter title" T="string" AutoGrow Immediate />
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudTextField ShrinkLabel="true" Label="Filter Description"  T="string" AutoGrow Immediate />
+                        </MudItem>
+                    </MudGrid>
 
                     <MudFab Class="my-sticky-menu pa-3 mr-2 align-self-end" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewSection(tab)" />
 
