@@ -7,6 +7,7 @@
 @inject StateContainer _stateContainer;
 @inject IDialogService DialogService
 @inject INoteService _noteService;
+@inject IJSRuntime JsRuntime
 
 <style>
     .my-sticky-menu {
@@ -14,12 +15,18 @@
         position: sticky;
         z-index: 2000;
         top: 64px;
+        background-color: transparent;
     }
 
     .tab-panel-width {
         width: 150px;
         word-wrap: break-word;
         word-break: break-word;
+    }
+
+    .Felement {
+        right: 0;
+        padding: 10px;
     }
 </style>
 
@@ -50,8 +57,12 @@
                         </MudItem>
                     </MudGrid>
 
-                    <MudFab Class="my-sticky-menu pa-3 mr-2 align-self-end" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewSection(tab)" />
-
+                    <MudPaper Class="d-flex justify-space-between flex-grow-1 gap-4 my-sticky-menu" Elevation="0">
+                        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewSection(tab)" />
+                        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.FormatLineSpacing" OnClick="() => OnButtonClick()" />
+                    </MudPaper>
+                    
+                
                     <MudStack>
                         @foreach (var item in tab.Elements.Where(item =>
                                    string.IsNullOrEmpty(FilterText) || item.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase)
@@ -79,11 +90,36 @@ else
     <p>Loading...</p>
 }
 
+<script>
+    function OnScrollEvent() {
+        var scrollHeight = document.documentElement.scrollHeight;
+        var scrollTop = document.documentElement.scrollTop;
+        var clientHeight = document.documentElement.clientHeight;
+        var scrollMiddle = scrollTop + clientHeight / 2;
+
+        if (scrollMiddle > scrollHeight / 2) {
+            // User has scrolled past the middle of the page, scroll to top
+            //document.documentElement.scrollTop = 0;
+            window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+        } 
+        else 
+        {
+            // User has not scrolled past the middle of the page, scroll to bottom
+            //document.documentElement.scrollTop = scrollHeight;
+            window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: "smooth" });
+        }
+    }
+</script>
+
 
 @code {
     public string FilterText { get; set; }
   public string FilterDescription { get; set; }
 
+    private async void OnButtonClick()
+    {
+        await JsRuntime.InvokeVoidAsync("OnScrollEvent");
+    }
 
     public int UserIndex;
 
