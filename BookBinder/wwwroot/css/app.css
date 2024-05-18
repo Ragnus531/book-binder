@@ -4,8 +4,64 @@
     src: url('../fonts/Abstante.ttf')
 }
 
+@font-face {
+    font-family: "Kira";
+    src: url('../fonts/Kira.otf')
+}
+
+@font-face {
+    font-family: "Info-Story";
+    src: url('../fonts/Info-Story.otf')
+}
+
+@font-face {
+    font-family: "Kagins";
+    src: url('../fonts/Kagins.otf')
+}
+
+@font-face {
+    font-family: "Prima";
+    src: url('../fonts/Prima.otf')
+}
+
+@font-face {
+    font-family: "Quadriana";
+    src: url('../fonts/quadriana.otf')
+}
+
+@font-face {
+    font-family: "Realce";
+    src: url('../fonts/Realce.otf')
+
+}
+
+@font-face {
+    font-family: "Retro-Gastroll";
+    src: url('../fonts/Retro-Gastroll.otf')
+}
+
+@font-face {
+    font-family: "Slow-Smoke";
+    src: url('../fonts/Slow-Smoke.otf')
+}
+
+@font-face {
+    font-family: "Vintella";
+    src: url('../fonts/Vintella-Skillton.otf')
+}
+
+@font-face {
+    font-family: "Waliny";
+    src: url('../fonts/Waliny.ttf')
+}
+
+@font-face {
+    font-family: "Xiaoheigungunti";
+    src: url('../fonts/Xiaoheigungunti.otf')
+}
+
 html, body {
-    font-family: 'Abstante', Helvetica, Arial, sans-serif;
+    font-family: 'Kagins';
 }
 
 a, .btn-link {
