@@ -52,8 +52,9 @@
                         </MudItem>
                     </MudGrid>
 
-                    <MudPaper Class="d-flex justify-space-between flex-grow-1 gap-4 my-sticky-menu" Elevation="0">
+                    <MudPaper Class="d-flex justify-space-between flex-grow-1 gap-4 my-sticky-menu mt-1" Elevation="0">
                         <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewSection(tab)" />
+                        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.FileOpen" OnClick="() => ExportNote()" />
                         <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.FormatLineSpacing" OnClick="() => OnButtonClick()" />
                     </MudPaper>
                     
@@ -109,7 +110,7 @@ else
 
 @code {
     public string FilterText { get; set; }
-  public string FilterDescription { get; set; }
+    public string FilterDescription { get; set; }
 
     private async void OnButtonClick()
     {
@@ -177,4 +178,19 @@ else
     {
         await Task.Run(() => _noteService.UpdateNote(BookNote));
     }
+
+    private async Task ExportNote()
+    {
+        //TODO: Implement logic for note
+        string fn = "Attachment.txt";
+        string file = Path.Combine(FileSystem.CacheDirectory, fn);
+
+        File.WriteAllText(file, "Hello World");
+
+        await Share.Default.RequestAsync(new ShareFileRequest
+            {
+                Title = "Share text file",
+                File = new ShareFile(file)
+            });
+    } 
 }
