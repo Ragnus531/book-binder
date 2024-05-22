@@ -187,10 +187,16 @@ else
 
         File.WriteAllText(file, "Hello World");
 
-        await Share.Default.RequestAsync(new ShareFileRequest
+        // await Share.Default.RequestAsync(new ShareFileRequest
+        //     {
+        //         Title = "Share text file",
+        //         File = new ShareFile(file)
+        //     });
+
+        await Share.Default.RequestAsync(new ShareTextRequest
             {
-                Title = "Share text file",
-                File = new ShareFile(file)
+                Text = "eyey",
+                Title = "Share Text"
             });
     } 
 }
