@@ -1,5 +1,6 @@
 ﻿using BookBinder.Data;
 using BookBinder.Services;
+using BookBinder.Services.Files;
 using BookBinder.Utils;
 using CommunityToolkit.Maui;
 using LiteDB;
@@ -29,6 +30,7 @@ namespace BookBinder
             builder.Services.AddSingleton<ILiteDatabase, LiteDatabase>(x => new LiteDatabase(path));
             builder.Services.AddMudServices();
             builder.Services.AddScoped<StateContainer>();
+            builder.Services.AddScoped<ITextFileExport, TextFileExport>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

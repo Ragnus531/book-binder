@@ -1,0 +1,20 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudRadioGroup  @bind-Value="@SelectedOption">
+            <MudRadio Value="@(false)" Color="Color.Primary">Export to another app (drive,notepad etc.)</MudRadio>
+            <MudRadio  Value="@(true)" Color="Color.Primary">Export to Folder</MudRadio>
+        </MudRadioGroup>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    public bool SelectedOption { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(SelectedOption));
+    void Cancel() => MudDialog.Cancel();
+}

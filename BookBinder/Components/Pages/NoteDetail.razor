@@ -2,12 +2,14 @@
 @using BookBinder.Components.Dialogs
 @using BookBinder.Models
 @using BookBinder.Services
+@using BookBinder.Services.Files
 @using BookBinder.Utils
 
 @inject StateContainer _stateContainer;
 @inject IDialogService DialogService
 @inject INoteService _noteService;
 @inject IJSRuntime JsRuntime
+@inject ITextFileExport _textFileExport;
 
 <style>
     .my-sticky-menu {
@@ -181,22 +183,32 @@ else
 
     private async Task ExportNote()
     {
-        //TODO: Implement logic for note
-        string fn = "Attachment.txt";
-        string file = Path.Combine(FileSystem.CacheDirectory, fn);
+        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
+        var result = await this.DialogService.Show<ExportImportDialog>(string.Empty, new DialogParameters(), options).Result;
+        
+        var exportToApp = result.Data as bool?;
+        if(exportToApp.HasValue)
+        {
+            await _textFileExport.FileExport(BookNote,exportToApp.Value);
+        }
 
-        File.WriteAllText(file, "Hello World");
+       
+        // //TODO: Implement logic for note
+        // string fn = "Attachment.txt";
+        // string file = Path.Combine(FileSystem.CacheDirectory, fn);
 
-        // await Share.Default.RequestAsync(new ShareFileRequest
+        // File.WriteAllText(file, "Hello World");
+
+        // // await Share.Default.RequestAsync(new ShareFileRequest
+        // //     {
+        // //         Title = "Share text file",
+        // //         File = new ShareFile(file)
+        // //     });
+
+        // await Share.Default.RequestAsync(new ShareTextRequest
         //     {
-        //         Title = "Share text file",
-        //         File = new ShareFile(file)
+        //         Text = "eyey",
+        //         Title = "Share Text"
         //     });
-
-        await Share.Default.RequestAsync(new ShareTextRequest
-            {
-                Text = "eyey",
-                Title = "Share Text"
-            });
     } 
 }
