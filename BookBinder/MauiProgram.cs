@@ -31,6 +31,8 @@ namespace BookBinder
             builder.Services.AddMudServices();
             builder.Services.AddScoped<StateContainer>();
             builder.Services.AddScoped<ITextFileExport, TextFileExport>();
+            builder.Services.AddSingleton(x => FilePicker.Default);
+            builder.Services.AddScoped<IFileImport, TextFileImport>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

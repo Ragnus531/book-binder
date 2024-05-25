@@ -1,4 +1,35 @@
-﻿<MudNavMenu>
+﻿@using BookBinder.Services
+@using BookBinder.Services.Files
+
+<MudNavMenu>
     <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.LibraryBooks">Book Notes</MudNavLink>
+    <MudNavGroup Title="Import/Export" Expanded="true">
+        <MudNavLink OnClick="@(() => ImportFiles())" Icon="@Icons.Material.Filled.FileDownload">Export</MudNavLink>
+        <MudNavLink OnClick="@(() => ExportFiles())" Icon="@Icons.Material.Filled.FileUpload">Import</MudNavLink>
+    </MudNavGroup>
     <MudNavLink Href="/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Security">Settings</MudNavLink>
 </MudNavMenu>
+
+
+@code
+{
+    [Inject] private IDialogService DialogService { get; set; }
+    [Inject] private IFileImport FileImport { get; set; }
+    [Inject] private INoteService NoteService { get; set; }
+
+    private async Task ImportFiles()
+    {
+        var bookNote =  await FileImport.Import();
+        if(bookNote != null)
+        {
+            NoteService.AddNote(bookNote);
+        }
+    }
+
+    private async Task ExportFiles()
+    {
+        await DialogService.ShowMessageBox(
+           "Warning",
+           "Sorry not implement!");
+    }
+}

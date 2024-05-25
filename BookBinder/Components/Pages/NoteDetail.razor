@@ -185,30 +185,11 @@ else
     {
         var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
         var result = await this.DialogService.Show<ExportImportDialog>(string.Empty, new DialogParameters(), options).Result;
-        
+
         var exportToApp = result.Data as bool?;
-        if(exportToApp.HasValue)
+        if (exportToApp.HasValue)
         {
-            await _textFileExport.FileExport(BookNote,exportToApp.Value);
+            await _textFileExport.FileExport(BookNote, exportToApp.Value);
         }
-
-       
-        // //TODO: Implement logic for note
-        // string fn = "Attachment.txt";
-        // string file = Path.Combine(FileSystem.CacheDirectory, fn);
-
-        // File.WriteAllText(file, "Hello World");
-
-        // // await Share.Default.RequestAsync(new ShareFileRequest
-        // //     {
-        // //         Title = "Share text file",
-        // //         File = new ShareFile(file)
-        // //     });
-
-        // await Share.Default.RequestAsync(new ShareTextRequest
-        //     {
-        //         Text = "eyey",
-        //         Title = "Share Text"
-        //     });
     } 
 }
