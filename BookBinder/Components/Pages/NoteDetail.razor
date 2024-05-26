@@ -2,12 +2,14 @@
 @using BookBinder.Components.Dialogs
 @using BookBinder.Models
 @using BookBinder.Services
+@using BookBinder.Services.Files
 @using BookBinder.Utils
 
 @inject StateContainer _stateContainer;
 @inject IDialogService DialogService
 @inject INoteService _noteService;
 @inject IJSRuntime JsRuntime
+@inject ITextFileExport _textFileExport;
 
 <style>
     .my-sticky-menu {
@@ -52,8 +54,9 @@
                         </MudItem>
                     </MudGrid>
 
-                    <MudPaper Class="d-flex justify-space-between flex-grow-1 gap-4 my-sticky-menu" Elevation="0">
+                    <MudPaper Class="d-flex justify-space-between flex-grow-1 gap-4 my-sticky-menu mt-1" Elevation="0">
                         <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewSection(tab)" />
+                        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.FileOpen" OnClick="() => ExportNote()" />
                         <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.FormatLineSpacing" OnClick="() => OnButtonClick()" />
                     </MudPaper>
                     
@@ -109,7 +112,7 @@ else
 
 @code {
     public string FilterText { get; set; }
-  public string FilterDescription { get; set; }
+    public string FilterDescription { get; set; }
 
     private async void OnButtonClick()
     {
@@ -177,4 +180,16 @@ else
     {
         await Task.Run(() => _noteService.UpdateNote(BookNote));
     }
+
+    private async Task ExportNote()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
+        var result = await this.DialogService.Show<ExportImportDialog>(string.Empty, new DialogParameters(), options).Result;
+
+        var exportToApp = result.Data as bool?;
+        if (exportToApp.HasValue)
+        {
+            await _textFileExport.FileExport(BookNote, exportToApp.Value);
+        }
+    } 
 }
