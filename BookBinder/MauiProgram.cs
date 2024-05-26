@@ -1,8 +1,10 @@
 ﻿using BookBinder.Data;
 using BookBinder.Services;
 using BookBinder.Services.Files;
+using BookBinder.Services.Files.FileRequests;
 using BookBinder.Utils;
 using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Storage;
 using LiteDB;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
@@ -31,7 +33,11 @@ namespace BookBinder
             builder.Services.AddMudServices();
             builder.Services.AddScoped<StateContainer>();
             builder.Services.AddScoped<ITextFileExport, TextFileExport>();
-            builder.Services.AddSingleton(x => FilePicker.Default);
+
+            builder.Services.AddTransient<IFilePicker>(x => FilePicker.Default);
+            builder.Services.AddTransient<IFileSaver>(x => FileSaver.Default);
+            builder.Services.AddTransient<IFilePickerRequest, TextFilePickerRequest>();
+
             builder.Services.AddScoped<IFileImport, TextFileImport>();
 
 #if DEBUG

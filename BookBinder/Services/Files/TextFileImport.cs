@@ -1,10 +1,19 @@
 ﻿using System.Text.RegularExpressions;
 using BookBinder.Models;
+using BookBinder.Services.Files.FileRequests;
+using FileInfo = BookBinder.Services.Files.FileRequests.FileInfo;
 
 namespace BookBinder.Services.Files;
 
 public class TextFileImport : IFileImport
 {
+    private readonly IFilePickerRequest _filePicker;
+
+    public TextFileImport(IFilePickerRequest filePicker)
+    {
+        _filePicker = filePicker;
+    }
+
     public async Task<BookNote?> Import()
     {
         try
@@ -26,16 +35,13 @@ public class TextFileImport : IFileImport
                 FileTypes = customFileType,
             };
 
-            var result = await FilePicker.Default.PickAsync(options);
-            if (result != null)
+            FileInfo fileInfo = await _filePicker.PickFileAsync(options);
+            if (fileInfo != null)
             {
-                if (result.FileName.EndsWith("txt", StringComparison.OrdinalIgnoreCase))
-                {
-                    using var stream = await result.OpenReadAsync();
-                    string bookNoteTitle = Path.GetFileNameWithoutExtension(result.FileName);
-                    BookNote bookNote = ReadBookNoteFromStream(stream, bookNoteTitle);
-                    return bookNote;
-                }
+                using var stream = fileInfo.FileStream;
+                string bookNoteTitle = Path.GetFileNameWithoutExtension(fileInfo.FileName);
+                BookNote bookNote = ReadBookNoteFromStream(stream, bookNoteTitle);
+                return bookNote;
             }
         }
         catch (Exception ex)
@@ -68,6 +74,15 @@ public class TextFileImport : IFileImport
 
                 while ((line = sr.ReadLine()) != null)
                 {
+                    // Actually last check to see if it's end of file
+                    if (sr.Peek() == -1)
+                    {
+                        if (noteSection != null)
+                        {
+                            note.NoteSections.Add(noteSection);
+                        }
+                    }
+
                     if (string.IsNullOrEmpty(line))
                         continue;
 
