@@ -2,6 +2,7 @@
 using BookBinder.Services;
 using BookBinder.Services.Files;
 using BookBinder.Services.Files.FileRequests;
+using BookBinder.UI;
 using BookBinder.Utils;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
@@ -39,6 +40,7 @@ namespace BookBinder
             builder.Services.AddTransient<IFilePickerRequest, TextFilePickerRequest>();
 
             builder.Services.AddScoped<IFileImport, TextFileImport>();
+            builder.Services.AddSingleton<AppState>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

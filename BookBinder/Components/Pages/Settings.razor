@@ -1,6 +1,14 @@
 ﻿@page "/settings"
+
+@using BookBinder.UI
+
+@inject AppState _appState;
+
 <h3>Settings</h3>
 
 @code {
-
+    protected override async Task OnInitializedAsync()
+    {
+        _appState.SetTitle("Settings");
+    }
 }

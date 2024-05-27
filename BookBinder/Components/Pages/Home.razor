@@ -1,10 +1,13 @@
 ﻿@page "/"
 @using BookBinder.Models
 @using BookBinder.Services
+@using BookBinder.UI
 @using BookBinder.Utils
+
 @inject INoteService _noteService;
 @inject NavigationManager _navigationManager;
 @inject StateContainer _stateContainer;
+@inject AppState _appState;
 
 <MudButton Variant="Variant.Filled">Default</MudButton>
 <MudButton Variant="Variant.Filled" Color="Color.Primary">Primary</MudButton>
@@ -35,8 +38,10 @@ else
 @code{
     private List<BookNote> _bookNotes;
 
+
     protected override async Task OnInitializedAsync()
-    {   
+    {
+        _appState.SetTitle("Notes");
         _bookNotes = _noteService.GetNotes().ToList();
     }
 

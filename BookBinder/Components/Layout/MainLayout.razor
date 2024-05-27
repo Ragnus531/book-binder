@@ -1,5 +1,11 @@
 ﻿@using MudBlazor
+@using BookBinder.UI
+
 @inherits LayoutComponentBase
+
+@inject AppState AppState
+@implements IDisposable
+
 <MudThemeProvider DefaultScrollbar="false" />
 <MudDialogProvider/>
 <MudSnackbarProvider/>
@@ -7,7 +13,7 @@
 <MudLayout>
     <MudAppBar>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        My Application
+        @AppState.CurrentTitle
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen">
         <NavMenu />
@@ -19,6 +25,16 @@
 
 @code {
     bool _drawerOpen = true;
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
 
     void DrawerToggle()
     {
