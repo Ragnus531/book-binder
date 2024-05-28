@@ -7,6 +7,17 @@ namespace BookBinder.Services.Files;
 
 public class TextFileExport : ITextFileExport
 {
+    private readonly IShare _share;
+    private readonly IFileSaver _fileSaver;
+    private readonly IClipboard _clipboard;
+
+    public TextFileExport(IShare share, IFileSaver fileSaver, IClipboard clipboard)
+    {
+        _share = share;
+        _fileSaver = fileSaver;
+        _clipboard = clipboard;
+    }
+
     public async Task FileExport(BookNote bookNote, bool exportToApp)
     {
         string fileName = bookNote.Title + ".txt";
@@ -14,7 +25,7 @@ public class TextFileExport : ITextFileExport
 
         if (exportToApp)
         {
-            await FileSaver.Default.SaveAsync(
+            await _fileSaver.SaveAsync(
                 fileName,
                 FileMemoryStream(bookNote),
                 new CancellationToken()
@@ -41,7 +52,7 @@ public class TextFileExport : ITextFileExport
                 writer.WriteLine(); // Add an empty line between BookNotes (optional)
             }
 
-            await Share.Default.RequestAsync(
+            await _share.RequestAsync(
                 new ShareFileRequest
                 {
                     Title = "Yo export that file", //todo: better text or leave meh
@@ -51,9 +62,9 @@ public class TextFileExport : ITextFileExport
         }
     }
 
-    public Task TextExport(BookNote bookNote)
+    public async Task TextExport(BookNote bookNote)
     {
-        throw new NotImplementedException();
+        await _clipboard.SetTextAsync(bookNote.ToExportFormat());
     }
 
     private MemoryStream FileMemoryStream(BookNote bookNote)

@@ -37,10 +37,12 @@ namespace BookBinder
 
             builder.Services.AddTransient<IFilePicker>(x => FilePicker.Default);
             builder.Services.AddTransient<IFileSaver>(x => FileSaver.Default);
+            builder.Services.AddTransient<IShare>(x => Share.Default);
             builder.Services.AddTransient<IFilePickerRequest, TextFilePickerRequest>();
 
             builder.Services.AddScoped<IFileImport, TextFileImport>();
             builder.Services.AddSingleton<AppState>();
+            builder.Services.AddSingleton<IClipboard>(x => Clipboard.Default);
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
