@@ -190,7 +190,7 @@ else
         var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
         var result = await this.DialogService.Show<ExportImportDialog>(string.Empty, new DialogParameters(), options).Result;
 
-        var exportToApp = result.Data as bool?;
+        var exportToApp = result.Data as ExportOptions?;
         if (exportToApp.HasValue)
         {
             await _textFileExport.FileExport(BookNote, exportToApp.Value);

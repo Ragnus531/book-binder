@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using BookBinder.Models;
+using BookBinder.Utils;
 using CommunityToolkit.Maui.Storage;
 
 namespace BookBinder.Services.Files;
@@ -18,18 +19,22 @@ public class TextFileExport : ITextFileExport
         _clipboard = clipboard;
     }
 
-    public async Task FileExport(BookNote bookNote, bool exportToApp)
+    public async Task FileExport(BookNote bookNote, ExportOptions exportOptions)
     {
         string fileName = bookNote.Title + ".txt";
         string filePath = Path.Combine(ExportedFileFolder(), fileName);
 
-        if (exportToApp)
+        if (exportOptions == ExportOptions.ExportToApp)
         {
             await _fileSaver.SaveAsync(
                 fileName,
                 FileMemoryStream(bookNote),
                 new CancellationToken()
             );
+        }
+        else if (exportOptions == ExportOptions.ExportToClipboard)
+        {
+            await TextExport(bookNote);
         }
         else
         {
