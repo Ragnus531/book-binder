@@ -1,8 +1,11 @@
-﻿<MudDialog>
+﻿@using BookBinder.Utils;
+
+<MudDialog>
     <DialogContent>
         <MudRadioGroup  @bind-Value="@SelectedOption">
-            <MudRadio Value="@(false)" Color="Color.Primary">Export to another app (drive,notepad etc.)</MudRadio>
-            <MudRadio  Value="@(true)" Color="Color.Primary">Export to Folder</MudRadio>
+            <MudRadio Value="@(ExportOptions.ExportToApp)" Color="Color.Primary">Export to another app (drive,notepad etc.)</MudRadio>
+            <MudRadio Value="@(ExportOptions.ExportToFolder)" Color="Color.Primary">Export to Folder</MudRadio>
+            <MudRadio Value="@(ExportOptions.ExportToClipboard)" Color="Color.Primary">Export to Clipboard</MudRadio>
         </MudRadioGroup>
     </DialogContent>
     <DialogActions>
@@ -12,7 +15,7 @@
 </MudDialog>
 
 @code {
-    public bool SelectedOption { get; set; }
+    public ExportOptions SelectedOption { get; set; }
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     void Submit() => MudDialog.Close(DialogResult.Ok(SelectedOption));
