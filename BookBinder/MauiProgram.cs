@@ -8,6 +8,7 @@ using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
 using LiteDB;
 using Microsoft.Extensions.Logging;
+using MudBlazor;
 using MudBlazor.Services;
 
 namespace BookBinder
@@ -31,7 +32,15 @@ namespace BookBinder
             var path = Path.Combine(FileSystem.AppDataDirectory, "book-notes.db");
             //add as a singleton - it's a single file with a single access point
             builder.Services.AddSingleton<ILiteDatabase, LiteDatabase>(x => new LiteDatabase(path));
-            builder.Services.AddMudServices();
+            builder.Services.AddMudServices(config =>
+            {
+                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+                config.SnackbarConfiguration.ShowCloseIcon = true;
+                config.SnackbarConfiguration.VisibleStateDuration = 1500;
+                config.SnackbarConfiguration.HideTransitionDuration = 500;
+                config.SnackbarConfiguration.ShowTransitionDuration = 500;
+                config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+            });
             builder.Services.AddScoped<StateContainer>();
             builder.Services.AddScoped<ITextFileExport, TextFileExport>();
 
