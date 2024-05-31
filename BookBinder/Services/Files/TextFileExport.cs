@@ -19,24 +19,12 @@ public class TextFileExport : ITextFileExport
         _clipboard = clipboard;
     }
 
-    public async Task FileExport(BookNote bookNote, ExportOptions exportOptions)
+    public async Task<bool> FileExport(BookNote bookNote, ExportOptions exportOptions)
     {
         string fileName = bookNote.Title + ".txt";
         string filePath = Path.Combine(ExportedFileFolder(), fileName);
 
         if (exportOptions == ExportOptions.ExportToApp)
-        {
-            await _fileSaver.SaveAsync(
-                fileName,
-                FileMemoryStream(bookNote),
-                new CancellationToken()
-            );
-        }
-        else if (exportOptions == ExportOptions.ExportToClipboard)
-        {
-            await TextExport(bookNote);
-        }
-        else
         {
             //If the file does not exist, the writer will create a new file.
             //If the file already exists, the writer will override its content.
@@ -64,6 +52,23 @@ public class TextFileExport : ITextFileExport
                     File = new ShareFile(filePath)
                 }
             );
+
+            return false; // _share.RequestAsync() triggers the sharing popup but doesn't wait for the user's action to complete
+        }
+        else if (exportOptions == ExportOptions.ExportToClipboard)
+        {
+            await TextExport(bookNote);
+            return true;
+        }
+        else
+        {
+            await _fileSaver.SaveAsync(
+                fileName,
+                FileMemoryStream(bookNote),
+                new CancellationToken()
+            );
+
+            return true;
         }
     }
 

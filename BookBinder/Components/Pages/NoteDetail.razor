@@ -12,6 +12,7 @@
 @inject INoteService _noteService;
 @inject IJSRuntime JsRuntime
 @inject ITextFileExport _textFileExport;
+@inject ISnackbar Snackbar
 
 <style>
     .my-sticky-menu {
@@ -59,7 +60,7 @@
                     <MudPaper Class="d-flex justify-space-between flex-grow-1 gap-4 my-sticky-menu mt-1" Elevation="0">
                         <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewSection(tab)" />
                         <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.FileOpen" OnClick="() => ExportNote()" />
-                        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.FormatLineSpacing" OnClick="() => OnButtonClick()" />
+                        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.FormatLineSpacing" OnClick="() => ScrollPage()" />
                     </MudPaper>
                     
                 
@@ -116,12 +117,23 @@ else
     public string FilterText { get; set; }
     public string FilterDescription { get; set; }
 
-    private async void OnButtonClick()
-    {
-        await JsRuntime.InvokeVoidAsync("OnScrollEvent");
-    }
-
+    [Parameter] public int SetHashCode { get; set; }
+    BookNote BookNote { get; set; }
     public int UserIndex;
+
+
+    void AddTabCallback() => AddTab(Guid.NewGuid());
+    void CloseTabCallback(MudTabPanel panel) => RemoveTab((Guid)panel.ID);
+
+
+    protected override void OnInitialized()
+    {
+        var data = (BookNote)_stateContainer.ObjectTunnel[SetHashCode];
+
+        BookNote = data;
+
+        _appState.SetTitle(BookNote != null ? BookNote.Title : "Note");
+    }
 
     public async Task AddTab(Guid id)
     {
@@ -142,23 +154,9 @@ else
         }
     }
 
-    void AddTabCallback() => AddTab(Guid.NewGuid());
-    void CloseTabCallback(MudTabPanel panel) => RemoveTab((Guid)panel.ID);
-
-
-    [Parameter] public int SetHashCode { get; set; }
-    BookNote BookNote { get; set; }
-
-    protected override async Task OnInitializedAsync()
+    private async void ScrollPage()
     {
-        Console.WriteLine("Getting hashCode " + SetHashCode);
-
-        var data = (BookNote)_stateContainer.ObjectTunnel[SetHashCode];
-
-        Console.WriteLine("object is " + data.Title);
-        BookNote = data;
-
-        _appState.SetTitle(BookNote != null ? BookNote.Title : "Note");
+        await JsRuntime.InvokeVoidAsync("OnScrollEvent");
     }
 
     private async Task<string> OpenDialog()
@@ -193,7 +191,17 @@ else
         var exportToApp = result.Data as ExportOptions?;
         if (exportToApp.HasValue)
         {
-            await _textFileExport.FileExport(BookNote, exportToApp.Value);
+            try{
+                var userResponseSuccess = await _textFileExport.FileExport(BookNote, exportToApp.Value);
+                if(userResponseSuccess)
+                {
+                    Snackbar.Add("Book note exported", Severity.Success);
+                }
+            }catch(Exception ex)
+            {
+                Snackbar.Add("Problem with exporting to file", Severity.Error);
+            }
+            
         }
     } 
 }

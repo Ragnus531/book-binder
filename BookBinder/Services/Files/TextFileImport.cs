@@ -21,11 +21,10 @@ public class TextFileImport : IFileImport
             var customFileType = new FilePickerFileType(
                 new Dictionary<DevicePlatform, IEnumerable<string>>
                 {
-                    { DevicePlatform.iOS, new[] { ".txt" } }, // UTType values
-                    { DevicePlatform.Android, new[] { ".txt" } }, // MIME type
+                    { DevicePlatform.iOS, new[] { "public.text" } }, // UTType values
+                    { DevicePlatform.Android, new[] { "text/plain" } }, // MIME type
                     { DevicePlatform.WinUI, new[] { ".txt" } }, // file extension
-                    { DevicePlatform.Tizen, new[] { ".txt" } },
-                    { DevicePlatform.macOS, new[] { ".txt" } }, // UTType values
+                    { DevicePlatform.macOS, new[] { "txt" } },
                 }
             );
 
