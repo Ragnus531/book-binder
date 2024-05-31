@@ -10,6 +10,6 @@ namespace BookBinder.Services.Files
 {
     public interface IFileExport
     {
-        Task FileExport(BookNote bookNote, ExportOptions exportOptions);
+        Task<bool> FileExport(BookNote bookNote, ExportOptions exportOptions);
     }
 }

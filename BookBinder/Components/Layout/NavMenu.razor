@@ -16,14 +16,24 @@
     [Inject] private IDialogService DialogService { get; set; }
     [Inject] private IFileImport FileImport { get; set; }
     [Inject] private INoteService NoteService { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
 
     private async Task ImportFiles()
     {
-        var bookNote =  await FileImport.Import();
-        if(bookNote != null)
+        try
         {
-            NoteService.AddNote(bookNote);
+            var bookNote = await FileImport.Import();
+            if (bookNote != null)
+            {
+                NoteService.AddNote(bookNote);
+                Snackbar.Add($"{bookNote.Title} imported", Severity.Success);
+            }
         }
+        catch(Exception ex)
+        {
+            Snackbar.Add("There was a problem while importing", Severity.Error);
+        }
+
     }
 
     private async Task ExportFiles()
