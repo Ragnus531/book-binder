@@ -1,4 +1,5 @@
-﻿using BookBinder.Data;
+﻿using BlazorComponentBus;
+using BookBinder.Data;
 using BookBinder.Services;
 using BookBinder.Services.Files;
 using BookBinder.Services.Files.FileRequests;
@@ -41,6 +42,7 @@ namespace BookBinder
                 config.SnackbarConfiguration.ShowTransitionDuration = 500;
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             });
+            builder.Services.AddScoped<ComponentBus>();
             builder.Services.AddScoped<StateContainer>();
             builder.Services.AddScoped<ITextFileExport, TextFileExport>();
 

@@ -10,9 +10,10 @@
 @inject StateContainer _stateContainer;
 @inject IDialogService DialogService
 @inject INoteService _noteService;
-@inject IJSRuntime JsRuntime
+@inject IJSRuntime _jsRuntime
 @inject ITextFileExport _textFileExport;
-@inject ISnackbar Snackbar
+@inject ISnackbar _snackbar
+@inject BlazorComponentBus.ComponentBus _bus
 
 <style>
     .my-sticky-menu {
@@ -156,7 +157,7 @@ else
 
     private async void ScrollPage()
     {
-        await JsRuntime.InvokeVoidAsync("OnScrollEvent");
+        await _jsRuntime.InvokeVoidAsync("OnScrollEvent");
     }
 
     private async Task<string> OpenDialog()
@@ -195,11 +196,11 @@ else
                 var userResponseSuccess = await _textFileExport.FileExport(BookNote, exportToApp.Value);
                 if(userResponseSuccess)
                 {
-                    Snackbar.Add("Book note exported", Severity.Success);
+                    _snackbar.Add("Book note exported", Severity.Success);
                 }
             }catch(Exception ex)
             {
-                Snackbar.Add("Problem with exporting to file", Severity.Error);
+                _snackbar.Add("Problem with exporting to file", Severity.Error);
             }
             
         }
