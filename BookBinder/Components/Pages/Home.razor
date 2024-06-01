@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using BlazorComponentBus
+@using BookBinder.Contracts.BookNoteComponents
 @using BookBinder.Models
 @using BookBinder.Services
 @using BookBinder.UI
@@ -8,6 +10,7 @@
 @inject NavigationManager _navigationManager;
 @inject StateContainer _stateContainer;
 @inject AppState _appState;
+@inject BlazorComponentBus.ComponentBus _bus
 
 <MudButton Variant="Variant.Filled">Default</MudButton>
 <MudButton Variant="Variant.Filled" Color="Color.Primary">Primary</MudButton>
@@ -36,20 +39,48 @@ else
 
 
 @code{
-    private List<BookNote> _bookNotes;
+    private List<BookNote> _bookNotes = new List<BookNote>();
 
-
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         _appState.SetTitle("Notes");
-        _bookNotes = _noteService.GetNotes().ToList();
+
+
+        var listFromDb = _noteService.GetNotes().OrderBy(a => a.Title).ToList();
+        _bookNotes = listFromDb ?? new List<BookNote>();
+        _bus.Subscribe<BookNoteAddedEvent>(BookNoteAddedHandler);
     }
 
     void GoToNoteDetail(BookNote bookNote){
         var hashCode = bookNote.GetHashCode();
         _stateContainer.ObjectTunnel.Add(hashCode, bookNote);
-        Console.WriteLine("Sending hash " + hashCode);
-
         _navigationManager.NavigateTo($"/note-detail/{hashCode}");
+    }
+
+    private void BookNoteAddedHandler(MessageArgs args)
+    {
+        var message = args.GetMessage<BookNoteAddedEvent>();
+
+        if(message.BookNote != null)
+        {
+            AddElementInSortedOrder(message.BookNote);
+            InvokeAsync(() => StateHasChanged());
+        }
+    }
+
+
+
+    private void AddElementInSortedOrder(BookNote element)
+    {
+        //local comparer
+        var comparer = Comparer<BookNote>.Create((x, y) => string.Compare(x.Title, y.Title, StringComparison.OrdinalIgnoreCase));
+        int index = _bookNotes.BinarySearch(element, comparer);
+        if (index < 0)
+        {
+            index = ~index; // bitwise complement of the index
+        }
+
+
+        _bookNotes.Insert(index, element);
     }
 }
