@@ -87,4 +87,23 @@ public class TextFileImportTests
         bookNote.Should().NotBeNull();
         bookNote?.NoteSections.Count.Should().Be(1); // sectionTemp
     }
+
+    [Fact]
+    public async Task file_import_should_import_file_fifth()
+    {
+        _filePickerMock
+            .PickFileAsync(Arg.Any<PickOptions>())
+            .Returns(
+                new BookBinder.Services.Files.FileRequests.FileInfo(
+                    "BookNoteTest1",
+                    StreamTestData.StreamForThirdFifth()
+                )
+            );
+
+        BookNote? bookNote = await fileImport.Import();
+
+        bookNote.Should().NotBeNull();
+        bookNote?.NoteSections[0].Elements[0].Name.Should().Be("element1.Title");
+        bookNote?.NoteSections[0].Elements[0].Description.Should().Be("element1.Descriptn");
+    }
 }

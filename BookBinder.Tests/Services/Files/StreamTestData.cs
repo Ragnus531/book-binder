@@ -100,4 +100,36 @@ public static class StreamTestData
         memStream.Seek(0, SeekOrigin.Begin);
         return memStream;
     }
+
+    public static MemoryStream StreamForThirdFifth()
+    {
+        /*
+         element1.Title - element1.Descriptn
+         element2.Title - element2.Description
+
+        section1
+         element1.Title - element1.Description
+         element2.Title - element2.Description
+
+         element3.Title - element4.Description
+
+        section2
+         */
+
+        var memStream = new MemoryStream();
+        var writer = new StreamWriter(memStream);
+        writer.WriteLine(" element1.Title @ element1.Descriptn");
+        writer.WriteLine(" element2.Title / element2.Description");
+        writer.WriteLine(string.Empty);
+        writer.WriteLine("section1");
+        writer.WriteLine(" element1.Title  element1.Descriptn");
+        writer.WriteLine(" element2.Title  element2.Description");
+        writer.WriteLine(string.Empty);
+        writer.WriteLine(" element3.Title | element2.Description");
+        writer.WriteLine(string.Empty);
+        writer.WriteLine("section2");
+        writer.Flush();
+        memStream.Seek(0, SeekOrigin.Begin);
+        return memStream;
+    }
 }

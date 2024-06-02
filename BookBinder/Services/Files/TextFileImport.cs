@@ -103,7 +103,7 @@ public class TextFileImport : IFileImport
                             noteSection = new NoteSection() { Title = "Section" };
                         }
 
-                        var eleText = SplitStringByDash(line);
+                        var eleText = SplitStringBySymbol(line);
 
                         noteSection.Elements.Add(
                             new NoteSectionElement()
@@ -133,25 +133,57 @@ public class TextFileImport : IFileImport
         return regex.IsMatch(input);
     }
 
-    private Tuple<string, string> SplitStringByDash(string input)
+    static (string title, string description) SplitStringBySymbol(string text)
     {
-        // Ignore leading dash if present
-        if (input.StartsWith("-"))
+        // Step 1: Remove the first character if it is a symbol
+        if (!char.IsLetterOrDigit(text[0]))
         {
-            input = input.Substring(1);
+            text = text.Substring(1);
         }
 
-        // Check if the string contains a dash
-        if (input.Contains('-'))
+        bool hasSpace = false;
+        int delimiterIndex = -1;
+        for (int i = 1; i < text.Length; i++)
         {
-            // Split the string by the dash
-            string[] parts = input.Split(new char[] { '-' }, 2);
-            return Tuple.Create(parts[0], parts[1]);
+            if (char.IsWhiteSpace(text[i]))
+            {
+                hasSpace = true;
+            }
+
+            if (!char.IsLetterOrDigit(text[i]) && text[i - 1] == ' ')
+            {
+                delimiterIndex = i;
+                break;
+            }
         }
-        else
+
+        if (delimiterIndex == -1)
         {
-            // Return the full string as the first part and an empty string as the second part
-            return Tuple.Create(input, string.Empty);
+            if (hasSpace)
+            {
+                Regex regex = new Regex(@"\s{2,}"); //first check if there is a more than 1 space section
+                Match match = regex.Match(text);
+                if (match.Success)
+                {
+                    int index = match.Index;
+                    // Separate the string into two parts
+                    string title = text.Substring(0, index);
+                    string description = text.Substring(index);
+                    return (title, description);
+                }
+                else
+                {
+                    var splitted = text.Split(' ', 2);
+                    return (splitted[0], splitted[1]);
+                }
+            }
+
+            return (text.Trim(), string.Empty);
         }
+
+        string titlePart = text.Substring(0, delimiterIndex).TrimEnd();
+        string descriptionPart = text.Substring(delimiterIndex + 1).TrimStart();
+
+        return (titlePart, descriptionPart);
     }
 }
