@@ -24,7 +24,6 @@ namespace BookBinder
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("Abstante.ttf", "Abstante");
                 });
 

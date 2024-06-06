@@ -12,13 +12,17 @@
 @inject AppState _appState;
 @inject BlazorComponentBus.ComponentBus _bus
 
-<MudButton Variant="Variant.Filled">Default</MudButton>
-<MudButton Variant="Variant.Filled" Color="Color.Primary">Primary</MudButton>
-<MudButton Variant="Variant.Filled" Color="Color.Secondary">Secondary</MudButton>
-
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<style>
+    .clickable-stack {
+        background-color: #e0f7fa; /* Light cyan background to indicate clickability */
+        border: 2px solid #26c6da; /* Cyan border */
+        border-radius: 8px; /* Rounded corners */
+        margin-bottom: 10px; /* Spacing between elements */
+    }
+    .clickable-stack .mud-icon-button {
+        align-self: center;
+    }
+</style>
 
 @if (_bookNotes == null)
 {
@@ -26,15 +30,19 @@ Welcome to your new app.
 }
 else
 {
-    <MudPaper Width="100%">
-         <MudNavMenu>>
-            @foreach (var bookNote in _bookNotes)
-            {
-                @* <MudNavLink Href="@($"note-detail/{bookNote.Id}")">@bookNote.Title</MudNavLink> *@
-                <MudListItem Text="@bookNote.Title" @onclick="() => GoToNoteDetail(bookNote)" />
-            }
-        </MudNavMenu>
-    </MudPaper>
+    <MudStack>
+        @foreach (var bookNote in _bookNotes)
+        {
+            <MudStack Row="true" Class="mud-elevation-4 py-2 rounded clickable-stack" @onclick="() => GoToNoteDetail(bookNote)">
+                <MudText Align="Align.Center" Class="px-2" Typo="Typo.h6">@bookNote.Title</MudText>
+                <MudPaper Class="d-flex flex-row-reverse flex-grow-1 gap-4" Elevation="0">
+                    <MudFab Size="Size.Small"  Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" />
+                    <MudFab Size="Size.Small"  Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Edit" />
+                    <MudIconButton Icon="@Icons.Material.Filled.ArrowForward" Color="Color.Primary" />
+                </MudPaper>
+            </MudStack>
+        }
+    </MudStack>
 }
 
 
