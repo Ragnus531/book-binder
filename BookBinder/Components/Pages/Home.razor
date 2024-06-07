@@ -19,6 +19,11 @@
         border-radius: 8px; /* Rounded corners */
         margin-bottom: 10px; /* Spacing between elements */
     }
+
+    .clickable-stack-no-border {
+        background-color: #e0f7fa; /* Light cyan background to indicate clickability */
+    }
+
     .clickable-stack .mud-icon-button {
         align-self: center;
     }
@@ -30,15 +35,14 @@
 }
 else
 {
-    <MudStack>
+    <MudStack Class="mt-2">
         @foreach (var bookNote in _bookNotes)
         {
-            <MudStack Row="true" Class="mud-elevation-4 py-2 rounded clickable-stack" @onclick="() => GoToNoteDetail(bookNote)">
+            <MudStack Row="true" Class="mud-elevation-4 py-2 rounded clickable-stack mud-theme-primary-darken" @onclick="() => GoToNoteDetail(bookNote)">
                 <MudText Align="Align.Center" Class="px-2" Typo="Typo.h6">@bookNote.Title</MudText>
-                <MudPaper Class="d-flex flex-row-reverse flex-grow-1 gap-4" Elevation="0">
-                    <MudFab Size="Size.Small"  Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" />
-                    <MudFab Size="Size.Small"  Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Edit" />
-                    <MudIconButton Icon="@Icons.Material.Filled.ArrowForward" Color="Color.Primary" />
+                <MudPaper Class="d-flex flex-row-reverse flex-grow-1 gap-4 mr-2 clickable-stack-no-border mud-theme-primary-darken" Elevation="0">
+                    <MudFab Size="Size.Small"  Color="Color.Warning" StartIcon="@Icons.Material.Filled.Edit" />
+                    <MudFab Size="Size.Small"  Color="Color.Secondary" StartIcon="@Icons.Material.Filled.DeleteForever" />
                 </MudPaper>
             </MudStack>
         }
