@@ -10,7 +10,8 @@
 @inject NavigationManager _navigationManager;
 @inject StateContainer _stateContainer;
 @inject AppState _appState;
-@inject BlazorComponentBus.ComponentBus _bus
+@inject BlazorComponentBus.ComponentBus _bus;
+@inject IDialogService _dialogService;
 
 <style>
     .clickable-stack {
@@ -41,8 +42,8 @@ else
             <MudStack Row="true" Class="mud-elevation-4 py-2 rounded clickable-stack mud-theme-primary-darken" @onclick="() => GoToNoteDetail(bookNote)">
                 <MudText Align="Align.Center" Class="px-2" Typo="Typo.h6">@bookNote.Title</MudText>
                 <MudPaper Class="d-flex flex-row-reverse flex-grow-1 gap-4 mr-2 clickable-stack-no-border mud-theme-primary-darken" Elevation="0">
-                    <MudFab Size="Size.Small"  Color="Color.Warning" StartIcon="@Icons.Material.Filled.Edit" />
-                    <MudFab Size="Size.Small"  Color="Color.Secondary" StartIcon="@Icons.Material.Filled.DeleteForever" />
+                    <MudFab Size="Size.Small" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Edit"  />
+                    <MudFab Size="Size.Small" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.DeleteForever" @onclick="() => DeleteBookNote(bookNote)" />
                 </MudPaper>
             </MudStack>
         }
@@ -63,7 +64,22 @@ else
         _bus.Subscribe<BookNoteAddedEvent>(BookNoteAddedHandler);
     }
 
-    void GoToNoteDetail(BookNote bookNote){
+    private async Task DeleteBookNote(BookNote bookNote)
+    {
+        bool? result = await _dialogService.ShowMessageBox(
+           $"Delete {bookNote.Title}?",
+           "Deleting can not be undone!",
+           yesText: "Delete!", cancelText: "Cancel");
+
+        if(result != null && result.Value)
+        {
+            _noteService.DeleteNote(bookNote);
+            _bookNotes.Remove(bookNote);
+            StateHasChanged();
+        }
+    }
+
+    private void GoToNoteDetail(BookNote bookNote){
         var hashCode = bookNote.GetHashCode();
         _stateContainer.ObjectTunnel.Add(hashCode, bookNote);
         _navigationManager.NavigateTo($"/note-detail/{hashCode}");
