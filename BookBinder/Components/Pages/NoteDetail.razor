@@ -172,7 +172,7 @@ else
         var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
         var result = await this.DialogService.Show<NoteElementDialog>(string.Empty, new DialogParameters(), options).Result;
         var elementFromDialog = result.Data as NoteSectionElement;
-        if(elementFromDialog != null)
+        if (elementFromDialog != null && !result.Canceled)
         {
             noteSection.Elements.Add(elementFromDialog);
             _noteService.UpdateNote(BookNote);

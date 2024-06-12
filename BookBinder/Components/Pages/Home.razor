@@ -13,6 +13,7 @@
 @inject AppState _appState;
 @inject BlazorComponentBus.ComponentBus _bus;
 @inject IDialogService _dialogService;
+@inject IJSRuntime _jsRuntime
 
 <style>
     .clickable-stack {
@@ -29,6 +30,21 @@
     .clickable-stack .mud-icon-button {
         align-self: center;
     }
+
+    .my-sticky-menu {
+        position: -webkit-sticky; 
+        position: sticky;
+        z-index: 1;
+        top: 64px;
+        background-color: transparent;
+    }
+
+    .tab-panel-width {
+        width: 150px;
+        word-wrap: break-word;
+        word-break: break-word;
+    }
+
 </style>
 
 @if (_bookNotes == null)
@@ -38,6 +54,11 @@
 else
 {
     <MudStack Class="mt-2">
+        <MudPaper Class="d-flex justify-center flex-grow-1 gap-4 my-sticky-menu mt-1 mr-3" Elevation="0">
+            <MudFab Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewBookNote()" />
+            <MudFab Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.FormatLineSpacing" OnClick="() => ScrollPage()" />
+        </MudPaper>
+
         @foreach (var bookNote in _bookNotes)
         {
             <MudStack Row="true" Class="mud-elevation-4 py-2 rounded clickable-stack mud-theme-primary-darken" @onclick="() => GoToNoteDetail(bookNote)">
@@ -50,6 +71,26 @@ else
         }
     </MudStack>
 }
+
+<script>
+    function OnScrollEvent() {
+        var scrollHeight = document.documentElement.scrollHeight;
+        var scrollTop = document.documentElement.scrollTop;
+        var clientHeight = document.documentElement.clientHeight;
+        var scrollMiddle = scrollTop + clientHeight / 2;
+
+        if (scrollMiddle > scrollHeight / 2) {
+            // User has scrolled past the middle of the page, scroll to top
+            //document.documentElement.scrollTop = 0;
+            window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+        }
+        else {
+            // User has not scrolled past the middle of the page, scroll to bottom
+            //document.documentElement.scrollTop = scrollHeight;
+            window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: "smooth" });
+        }
+    }
+</script>
 
 
 @code{
@@ -90,7 +131,7 @@ else
         var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
         var result = await _dialogService.Show<BookNoteAddOrUpdateDialog>(string.Empty, parameters, options).Result;
         var editedBookNote = result.Data as BookNote;
-        if (editedBookNote != null)
+        if (editedBookNote != null && !result.Canceled)
         {
             _noteService.UpdateNote(editedBookNote);
             _bookNotes.SingleOrDefault(x => x.Id == editedBookNote.Id)!.Title = editedBookNote.Title;
@@ -114,7 +155,27 @@ else
         }
     }
 
+    private async void ScrollPage()
+    {
+        await _jsRuntime.InvokeVoidAsync("OnScrollEvent");
+    }
 
+    private async Task AddNewBookNote()
+    {
+        var parameters = new DialogParameters<BookNoteAddOrUpdateDialog>()
+        {
+            {x=> x.BookNote,new BookNote()}
+        };
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
+        var result = await _dialogService.Show<BookNoteAddOrUpdateDialog>(string.Empty, parameters, options).Result;
+        var addedBookNote = result.Data as BookNote;
+        if (addedBookNote != null && !result.Canceled)
+        {
+            _noteService.AddNote(addedBookNote);
+            AddElementInSortedOrder(addedBookNote);
+        }
+    }
 
     private void AddElementInSortedOrder(BookNote element)
     {
