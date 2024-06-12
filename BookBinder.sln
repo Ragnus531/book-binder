@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookBinder", "BookBinder\BookBinder.csproj", "{7D1DDA36-7EC9-4768-A377-E0EF4F664F2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookBinder.Tests", "BookBinder.Tests\BookBinder.Tests.csproj", "{46BE91C7-805E-4CD6-8117-19F13941AAEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookBinder.Tests", "BookBinder.Tests\BookBinder.Tests.csproj", "{46BE91C7-805E-4CD6-8117-19F13941AAEE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

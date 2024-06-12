@@ -58,6 +58,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Remove="Components\Dialogs\BookNoteAddOrUpdateDialog.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="BlazorComponentBus" Version="2.2.0" />
         <PackageReference Include="CommunityToolkit.Maui" Version="8.0.1" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
@@ -67,6 +71,18 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
         <PackageReference Include="MudBlazor" Version="6.19.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Components\Dialogs\BookNoteAddOrUpdateDialog.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\Dialogs\BookNoteAddOrUpdateDialog.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="Components\Dialogs\BookNoteAddOrUpdateDialog.razor" />
     </ItemGroup>
 
 </Project>

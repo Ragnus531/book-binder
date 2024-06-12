@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using BlazorComponentBus
+@using BookBinder.Components.Dialogs
 @using BookBinder.Contracts.BookNoteComponents
 @using BookBinder.Models
 @using BookBinder.Services
@@ -42,7 +43,7 @@ else
             <MudStack Row="true" Class="mud-elevation-4 py-2 rounded clickable-stack mud-theme-primary-darken" @onclick="() => GoToNoteDetail(bookNote)">
                 <MudText Align="Align.Center" Class="px-2" Typo="Typo.h6">@bookNote.Title</MudText>
                 <MudPaper Class="d-flex flex-row-reverse flex-grow-1 gap-4 mr-2 clickable-stack-no-border mud-theme-primary-darken" Elevation="0">
-                    <MudFab Size="Size.Small" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Edit"  />
+                    <MudFab Size="Size.Small" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Edit" @onclick="() => EditBookNote(bookNote)" />
                     <MudFab Size="Size.Small" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.DeleteForever" @onclick="() => DeleteBookNote(bookNote)" />
                 </MudPaper>
             </MudStack>
@@ -76,6 +77,23 @@ else
             _noteService.DeleteNote(bookNote);
             _bookNotes.Remove(bookNote);
             StateHasChanged();
+        }
+    }
+
+    private async Task EditBookNote(BookNote bookNote)
+    {
+        var parameters = new DialogParameters<BookNoteAddOrUpdateDialog>()
+        {
+            {x=> x.BookNote,bookNote}
+        };
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
+        var result = await _dialogService.Show<BookNoteAddOrUpdateDialog>(string.Empty, parameters, options).Result;
+        var editedBookNote = result.Data as BookNote;
+        if (editedBookNote != null)
+        {
+            _noteService.UpdateNote(editedBookNote);
+            _bookNotes.SingleOrDefault(x => x.Id == editedBookNote.Id)!.Title = editedBookNote.Title;
         }
     }
 
