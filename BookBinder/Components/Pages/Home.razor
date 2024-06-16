@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using BlazorComponentBus
+@using BookBinder.Components.Dialogs
 @using BookBinder.Contracts.BookNoteComponents
 @using BookBinder.Models
 @using BookBinder.Services
@@ -10,15 +11,41 @@
 @inject NavigationManager _navigationManager;
 @inject StateContainer _stateContainer;
 @inject AppState _appState;
-@inject BlazorComponentBus.ComponentBus _bus
+@inject BlazorComponentBus.ComponentBus _bus;
+@inject IDialogService _dialogService;
+@inject IJSRuntime _jsRuntime
 
-<MudButton Variant="Variant.Filled">Default</MudButton>
-<MudButton Variant="Variant.Filled" Color="Color.Primary">Primary</MudButton>
-<MudButton Variant="Variant.Filled" Color="Color.Secondary">Secondary</MudButton>
+<style>
+    .clickable-stack {
+        background-color: #e0f7fa; /* Light cyan background to indicate clickability */
+        border: 2px solid #26c6da; /* Cyan border */
+        border-radius: 8px; /* Rounded corners */
+        margin-bottom: 10px; /* Spacing between elements */
+    }
 
-<h1>Hello, world!</h1>
+    .clickable-stack-no-border {
+        background-color: #e0f7fa; /* Light cyan background to indicate clickability */
+    }
 
-Welcome to your new app.
+    .clickable-stack .mud-icon-button {
+        align-self: center;
+    }
+
+    .my-sticky-menu {
+        position: -webkit-sticky; 
+        position: sticky;
+        z-index: 1;
+        top: 64px;
+        background-color: transparent;
+    }
+
+    .tab-panel-width {
+        width: 150px;
+        word-wrap: break-word;
+        word-break: break-word;
+    }
+
+</style>
 
 @if (_bookNotes == null)
 {
@@ -26,32 +53,105 @@ Welcome to your new app.
 }
 else
 {
-    <MudPaper Width="100%">
-         <MudNavMenu>>
-            @foreach (var bookNote in _bookNotes)
-            {
-                @* <MudNavLink Href="@($"note-detail/{bookNote.Id}")">@bookNote.Title</MudNavLink> *@
-                <MudListItem Text="@bookNote.Title" @onclick="() => GoToNoteDetail(bookNote)" />
-            }
-        </MudNavMenu>
-    </MudPaper>
+    <MudStack Class="mt-2">
+        <MudTextField ShrinkLabel="true" Label="Filter Title" T="string" AutoGrow Immediate @bind-Value="@FilterTitle" />
+
+        @if(_bookNotes.Count > 1)
+        {
+            <MudPaper Class="d-flex justify-end flex-grow-1 gap-4 my-sticky-menu mt-1 mr-3" Elevation="0">
+                <MudFab Size="Size.Large" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewBookNote()" />
+                <MudFab Size="Size.Large" Color="Color.Primary" StartIcon="@Icons.Material.Filled.FormatLineSpacing" OnClick="() => ScrollPage()" />
+            </MudPaper>
+        }
+       
+
+        @foreach (var bookNote in _bookNotes.Where(item => string.IsNullOrEmpty(FilterTitle) 
+        || item.Title.Contains(FilterTitle, StringComparison.OrdinalIgnoreCase)))
+        {
+            <MudStack Row="true" Class="mud-elevation-4 py-2 rounded clickable-stack mud-theme-primary-darken" @onclick="() => GoToNoteDetail(bookNote)">
+                <MudText Align="Align.Center" Class="px-2" Typo="Typo.h6">@bookNote.Title</MudText>
+                <MudPaper Class="d-flex flex-row-reverse flex-grow-1 gap-4 mr-2 clickable-stack-no-border mud-theme-primary-darken" Elevation="0">
+                    <MudFab Size="Size.Small" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Edit" @onclick="() => EditBookNote(bookNote)" />
+                    <MudFab Size="Size.Small" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.DeleteForever" @onclick="() => DeleteBookNote(bookNote)" />
+                </MudPaper>
+            </MudStack>
+        }
+    </MudStack>
 }
+
+<script>
+    function OnScrollEvent() {
+        var scrollHeight = document.documentElement.scrollHeight;
+        var scrollTop = document.documentElement.scrollTop;
+        var clientHeight = document.documentElement.clientHeight;
+        var scrollMiddle = scrollTop + clientHeight / 2;
+
+        if (scrollMiddle > scrollHeight / 2) {
+            // User has scrolled past the middle of the page, scroll to top
+            //document.documentElement.scrollTop = 0;
+            window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+        }
+        else {
+            // User has not scrolled past the middle of the page, scroll to bottom
+            //document.documentElement.scrollTop = scrollHeight;
+            window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: "smooth" });
+        }
+    }
+</script>
 
 
 @code{
     private List<BookNote> _bookNotes = new List<BookNote>();
+    public string FilterTitle { get; set; } = string.Empty;
+    bool suppressRender;
+
+    protected override bool ShouldRender()
+        => !suppressRender;
 
     protected override void OnInitialized()
     {
         _appState.SetTitle("Notes");
-
+        _appState.SetNavigation(false);
 
         var listFromDb = _noteService.GetNotes().OrderBy(a => a.Title).ToList();
         _bookNotes = listFromDb ?? new List<BookNote>();
         _bus.Subscribe<BookNoteAddedEvent>(BookNoteAddedHandler);
     }
 
-    void GoToNoteDetail(BookNote bookNote){
+    private async Task DeleteBookNote(BookNote bookNote)
+    {
+        bool? result = await _dialogService.ShowMessageBox(
+           $"Delete {bookNote.Title}?",
+           "Deleting can not be undone!",
+           yesText: "Delete!", cancelText: "Cancel");
+
+        if(result != null && result.Value)
+        {
+            _noteService.DeleteNote(bookNote);
+            _bookNotes.Remove(bookNote);
+            StateHasChanged();
+        }
+    }
+
+    private async Task EditBookNote(BookNote bookNote)
+    {
+        var parameters = new DialogParameters<BookNoteAddOrUpdateDialog>()
+        {
+            {x=> x.BookNote,bookNote}
+        };
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
+        var result = await _dialogService.Show<BookNoteAddOrUpdateDialog>("Edit", parameters, options).Result;
+        var editedBookNote = result.Data as BookNote;
+        if (editedBookNote != null && !result.Canceled)
+        {
+            _noteService.UpdateNote(editedBookNote);
+            _bookNotes.SingleOrDefault(x => x.Id == editedBookNote.Id)!.Title = editedBookNote.Title;
+        }
+    }
+
+    private void GoToNoteDetail(BookNote bookNote){
+        suppressRender = true;
         var hashCode = bookNote.GetHashCode();
         _stateContainer.ObjectTunnel.Add(hashCode, bookNote);
         _navigationManager.NavigateTo($"/note-detail/{hashCode}");
@@ -68,7 +168,27 @@ else
         }
     }
 
+    private async void ScrollPage()
+    {
+        await _jsRuntime.InvokeVoidAsync("OnScrollEvent");
+    }
 
+    private async Task AddNewBookNote()
+    {
+        var parameters = new DialogParameters<BookNoteAddOrUpdateDialog>()
+        {
+            {x=> x.BookNote,new BookNote()}
+        };
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
+        var result = await _dialogService.Show<BookNoteAddOrUpdateDialog>("Add", parameters, options).Result;
+        var addedBookNote = result.Data as BookNote;
+        if (addedBookNote != null && !result.Canceled)
+        {
+            _noteService.AddNote(addedBookNote);
+            AddElementInSortedOrder(addedBookNote);
+        }
+    }
 
     private void AddElementInSortedOrder(BookNote element)
     {

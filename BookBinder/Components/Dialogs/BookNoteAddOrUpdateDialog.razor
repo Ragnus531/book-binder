@@ -1,0 +1,22 @@
+﻿@using BookBinder.Models
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField T="string" @bind-Value="@BookNote.Title" Label="Title" Immediate="@true" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Disabled="@(string.IsNullOrWhiteSpace(BookNote.Title))" Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public BookNote BookNote { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(BookNote));
+    void Cancel() => MudDialog.Cancel();
+}
