@@ -14,6 +14,7 @@
 @inject ITextFileExport _textFileExport;
 @inject ISnackbar _snackbar
 @inject BlazorComponentBus.ComponentBus _bus
+@inject IDialogService _dialogService;
 
 <style>
     .my-sticky-menu {
@@ -124,7 +125,7 @@ else
 
 
     void AddTabCallback() => AddTab(Guid.NewGuid());
-    void CloseTabCallback(MudTabPanel panel) => RemoveTab((Guid)panel.ID);
+    async Task  CloseTabCallback(MudTabPanel panel) => await RemoveTab((Guid)panel.ID);
 
 
     protected override void OnInitialized()
@@ -134,37 +135,48 @@ else
         BookNote = data;
 
         _appState.SetTitle(BookNote != null ? BookNote.Title : "Note");
+        _appState.SetNavigation(true);
+
     }
 
     public async Task AddTab(Guid id)
     {
-        var sectionTitle = await OpenDialog();
+        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
+        var result = await this.DialogService.Show<NoteSectionDialog>(string.Empty, new DialogParameters(), options).Result;
+        if(result.Cancelled || result == null )
+        {
+            return;
+        }
+
+        var sectionTitle = result.Data as string;
         BookNote.NoteSections.Add(new NoteSection() { Id = Guid.NewGuid(), Title = sectionTitle, Elements = new List<NoteSectionElement>() });
         _noteService.UpdateNote(BookNote);
         UserIndex = BookNote.NoteSections.Count - 1; // Automatically switch to the new tab.
         StateHasChanged();
     }
 
-    public void RemoveTab(Guid id)
+    public async Task RemoveTab(Guid id)
     {
-        var tabView = BookNote.NoteSections.SingleOrDefault((t) => Equals(t.Id, id));
-        if (tabView is not null)
+        bool? result = await _dialogService.ShowMessageBox(
+          $"Are you sure?",
+          "Deleting can not be undone!",
+          yesText: "Delete!", cancelText: "Cancel");
+
+        if(result != null && result.Value)
         {
-            BookNote.NoteSections.Remove(tabView);
-            _noteService.UpdateNote(BookNote);
+            var tabView = BookNote.NoteSections.SingleOrDefault((t) => Equals(t.Id, id));
+            if (tabView is not null)
+            {
+                BookNote.NoteSections.Remove(tabView);
+                _noteService.UpdateNote(BookNote);
+            }
         }
+       
     }
 
     private async void ScrollPage()
     {
         await _jsRuntime.InvokeVoidAsync("OnScrollEvent");
-    }
-
-    private async Task<string> OpenDialog()
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
-        var result = await this.DialogService.Show<NoteSectionDialog>(string.Empty, new DialogParameters(), options).Result;
-        return result.Data as string;
     }
 
     private async Task AddNewSection(NoteSection noteSection)

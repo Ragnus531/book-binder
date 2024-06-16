@@ -4,6 +4,9 @@
 @inherits LayoutComponentBase
 
 @inject AppState AppState
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
 @implements IDisposable
 
 <MudThemeProvider DefaultScrollbar="false" />
@@ -14,6 +17,7 @@
     <MudAppBar>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         @AppState.CurrentTitle
+        <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => ComeBackComeBack())" hidden="@{!AppState.NavigationVisible}" />
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen">
         <NavMenu />
@@ -40,4 +44,13 @@
     {
         _drawerOpen = !_drawerOpen;
     }
+
+    /// <summary>
+    /// YEEE FROM THAT MEME
+    /// </summary>
+    async Task ComeBackComeBack()
+    {
+        await JSRuntime.InvokeVoidAsync("history.back");
+    }
+
 }

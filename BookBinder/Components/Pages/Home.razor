@@ -56,10 +56,14 @@ else
     <MudStack Class="mt-2">
         <MudTextField ShrinkLabel="true" Label="Filter Title" T="string" AutoGrow Immediate @bind-Value="@FilterTitle" />
 
-        <MudPaper Class="d-flex justify-end flex-grow-1 gap-4 my-sticky-menu mt-1 mr-3" Elevation="0">
-            <MudFab Size="Size.Large" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewBookNote()" />
-            <MudFab Size="Size.Large" Color="Color.Primary" StartIcon="@Icons.Material.Filled.FormatLineSpacing" OnClick="() => ScrollPage()" />
-        </MudPaper>
+        @if(_bookNotes.Count > 1)
+        {
+            <MudPaper Class="d-flex justify-end flex-grow-1 gap-4 my-sticky-menu mt-1 mr-3" Elevation="0">
+                <MudFab Size="Size.Large" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewBookNote()" />
+                <MudFab Size="Size.Large" Color="Color.Primary" StartIcon="@Icons.Material.Filled.FormatLineSpacing" OnClick="() => ScrollPage()" />
+            </MudPaper>
+        }
+       
 
         @foreach (var bookNote in _bookNotes.Where(item => string.IsNullOrEmpty(FilterTitle) 
         || item.Title.Contains(FilterTitle, StringComparison.OrdinalIgnoreCase)))
@@ -99,11 +103,15 @@ else
 @code{
     private List<BookNote> _bookNotes = new List<BookNote>();
     public string FilterTitle { get; set; } = string.Empty;
+    bool suppressRender;
+
+    protected override bool ShouldRender()
+        => !suppressRender;
 
     protected override void OnInitialized()
     {
         _appState.SetTitle("Notes");
-
+        _appState.SetNavigation(false);
 
         var listFromDb = _noteService.GetNotes().OrderBy(a => a.Title).ToList();
         _bookNotes = listFromDb ?? new List<BookNote>();
@@ -133,7 +141,7 @@ else
         };
 
         var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
-        var result = await _dialogService.Show<BookNoteAddOrUpdateDialog>(string.Empty, parameters, options).Result;
+        var result = await _dialogService.Show<BookNoteAddOrUpdateDialog>("Edit", parameters, options).Result;
         var editedBookNote = result.Data as BookNote;
         if (editedBookNote != null && !result.Canceled)
         {
@@ -143,6 +151,7 @@ else
     }
 
     private void GoToNoteDetail(BookNote bookNote){
+        suppressRender = true;
         var hashCode = bookNote.GetHashCode();
         _stateContainer.ObjectTunnel.Add(hashCode, bookNote);
         _navigationManager.NavigateTo($"/note-detail/{hashCode}");
@@ -172,7 +181,7 @@ else
         };
 
         var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = false };
-        var result = await _dialogService.Show<BookNoteAddOrUpdateDialog>(string.Empty, parameters, options).Result;
+        var result = await _dialogService.Show<BookNoteAddOrUpdateDialog>("Add", parameters, options).Result;
         var addedBookNote = result.Data as BookNote;
         if (addedBookNote != null && !result.Canceled)
         {
