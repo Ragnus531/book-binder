@@ -54,12 +54,15 @@
 else
 {
     <MudStack Class="mt-2">
-        <MudPaper Class="d-flex justify-center flex-grow-1 gap-4 my-sticky-menu mt-1 mr-3" Elevation="0">
-            <MudFab Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewBookNote()" />
-            <MudFab Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.FormatLineSpacing" OnClick="() => ScrollPage()" />
+        <MudTextField ShrinkLabel="true" Label="Filter Title" T="string" AutoGrow Immediate @bind-Value="@FilterTitle" />
+
+        <MudPaper Class="d-flex justify-end flex-grow-1 gap-4 my-sticky-menu mt-1 mr-3" Elevation="0">
+            <MudFab Size="Size.Large" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewBookNote()" />
+            <MudFab Size="Size.Large" Color="Color.Primary" StartIcon="@Icons.Material.Filled.FormatLineSpacing" OnClick="() => ScrollPage()" />
         </MudPaper>
 
-        @foreach (var bookNote in _bookNotes)
+        @foreach (var bookNote in _bookNotes.Where(item => string.IsNullOrEmpty(FilterTitle) 
+        || item.Title.Contains(FilterTitle, StringComparison.OrdinalIgnoreCase)))
         {
             <MudStack Row="true" Class="mud-elevation-4 py-2 rounded clickable-stack mud-theme-primary-darken" @onclick="() => GoToNoteDetail(bookNote)">
                 <MudText Align="Align.Center" Class="px-2" Typo="Typo.h6">@bookNote.Title</MudText>
@@ -95,6 +98,7 @@ else
 
 @code{
     private List<BookNote> _bookNotes = new List<BookNote>();
+    public string FilterTitle { get; set; } = string.Empty;
 
     protected override void OnInitialized()
     {
