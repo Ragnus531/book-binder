@@ -52,10 +52,10 @@
 
                     <MudGrid>
                         <MudItem xs="6">
-                            <MudTextField ShrinkLabel="true" Label="Filter Title" T="string" AutoGrow Immediate @bind-Value="@FilterText" />
+                            <MudTextField Disabled="@(tab.Elements.Count < 2)" ShrinkLabel="true" Label="Filter Title" T="string" AutoGrow Immediate @bind-Value="@FilterText" />
                         </MudItem>
                         <MudItem xs="6">
-                            <MudTextField ShrinkLabel="true" Label="Filter Description" T="string" AutoGrow Immediate @bind-Value="@FilterDescription" />
+                            <MudTextField Disabled="@(tab.Elements.Count < 2)" ShrinkLabel="true" Label="Filter Description" T="string" AutoGrow Immediate @bind-Value="@FilterDescription" />
                         </MudItem>
                     </MudGrid>
 
