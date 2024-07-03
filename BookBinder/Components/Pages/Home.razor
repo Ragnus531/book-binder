@@ -32,7 +32,7 @@
     }
 
     .my-sticky-menu {
-        position: -webkit-sticky; 
+        position: -webkit-sticky;
         position: sticky;
         z-index: 1;
         top: 64px;
@@ -56,17 +56,16 @@ else
     <MudStack Class="mt-2">
         <MudTextField ShrinkLabel="true" Label="Filter Title" T="string" AutoGrow Immediate @bind-Value="@FilterTitle" />
 
-        @if(_bookNotes.Count > 1)
-        {
-            <MudPaper Class="d-flex justify-end flex-grow-1 gap-4 my-sticky-menu mt-1 mr-3" Elevation="0">
-                <MudFab Size="Size.Large" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewBookNote()" />
-                <MudFab Size="Size.Large" Color="Color.Primary" StartIcon="@Icons.Material.Filled.FormatLineSpacing" OnClick="() => ScrollPage()" />
-            </MudPaper>
-        }
-       
 
-        @foreach (var bookNote in _bookNotes.Where(item => string.IsNullOrEmpty(FilterTitle) 
-        || item.Title.Contains(FilterTitle, StringComparison.OrdinalIgnoreCase)))
+        <MudPaper Class="d-flex justify-end flex-grow-1 gap-4 my-sticky-menu mt-1 mr-3" Elevation="0">
+            <MudFab Size="Size.Large" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddNewBookNote()" />
+            <MudFab Size="Size.Large" Color="Color.Primary" StartIcon="@Icons.Material.Filled.FormatLineSpacing" OnClick="() => ScrollPage()" />
+        </MudPaper>
+
+
+
+        @foreach (var bookNote in _bookNotes.Where(item => string.IsNullOrEmpty(FilterTitle)
+       || item.Title.Contains(FilterTitle, StringComparison.OrdinalIgnoreCase)))
         {
             <MudStack Row="true" Class="mud-elevation-4 py-2 rounded clickable-stack mud-theme-primary-darken" @onclick="() => GoToNoteDetail(bookNote)">
                 <MudText Align="Align.Center" Class="px-2" Typo="Typo.h6">@bookNote.Title</MudText>
@@ -100,7 +99,7 @@ else
 </script>
 
 
-@code{
+@code {
     private List<BookNote> _bookNotes = new List<BookNote>();
     public string FilterTitle { get; set; } = string.Empty;
     bool suppressRender;
@@ -125,7 +124,7 @@ else
            "Deleting can not be undone!",
            yesText: "Delete!", cancelText: "Cancel");
 
-        if(result != null && result.Value)
+        if (result != null && result.Value)
         {
             _noteService.DeleteNote(bookNote);
             _bookNotes.Remove(bookNote);
@@ -150,7 +149,8 @@ else
         }
     }
 
-    private void GoToNoteDetail(BookNote bookNote){
+    private void GoToNoteDetail(BookNote bookNote)
+    {
         suppressRender = true;
         var hashCode = bookNote.GetHashCode();
         _stateContainer.ObjectTunnel.Add(hashCode, bookNote);
@@ -161,7 +161,7 @@ else
     {
         var message = args.GetMessage<BookNoteAddedEvent>();
 
-        if(message.BookNote != null)
+        if (message.BookNote != null)
         {
             AddElementInSortedOrder(message.BookNote);
             InvokeAsync(() => StateHasChanged());
