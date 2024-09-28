@@ -60,8 +60,13 @@
     src: url('../fonts/Xiaoheigungunti.otf')
 }
 
+@font-face {
+    font-family: 'Superboys';
+    src: url('../fonts/SuperBoys.ttf')
+}
+
 html, body {
-    font-family: 'Abstante';
+    font-family: 'Superboys';
 }
 
 a, .btn-link {
